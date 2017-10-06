@@ -36,7 +36,7 @@ cat <<EOF >~/.datacube.conf
 db_database: datacube
 
 # A blank host will use a local socket. Specify a hostname to use TCP.
-db_hostname: localhost
+db_hostname: 54.166.94.36
 
 # Credentials are optional: you might have other Postgres authentication configured.
 # The default username otherwise is the current user id.
