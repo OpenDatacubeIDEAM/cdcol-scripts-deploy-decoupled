@@ -1,12 +1,18 @@
 #!/bin/bash
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 
+USUARIO_CUBO="$(whoami)"
+PASSWORD_CUBO='ASDFADFASSDFA'
+ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
+REPO="https://github.com/cronosnull/agdc-v2.git"
+BRANCH="develop"
 
 sudo apt-get update
 sudo apt-get install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx virtualenv gunicorn git
 pip install virtualenv
 virtualenv v_ideam
 source v_ideam/bin/activate
+mkdir projects
 cd projects
 git clone -b develop https://MPMancipe@bitbucket.org/ideam20162/web-app.git
 cd web-app
@@ -26,3 +32,6 @@ EOF
 
 source ~/.bashrc
 source ~/v_ideam/bin/activate
+python manage.py migrate
+python manage.py collectstatic
+python manage.py createsuperuser
