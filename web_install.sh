@@ -8,7 +8,7 @@ pip install virtualenv
 virtualenv v_ideam
 source v_ideam/bin/activate
 cd projects
-git clone -b develop https://usuario@bitbucket.org/ideam20162/web-app.git
+git clone -b develop https://MPMancipe@bitbucket.org/ideam20162/web-app.git
 cd web-app
 pip install -r requirements.txt
 
