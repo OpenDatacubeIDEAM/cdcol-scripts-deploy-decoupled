@@ -89,11 +89,11 @@ sudo systemctl enable gunicorn
 #MOUNT NFS SERVER
 cd $HOME
 sudo apt install nfs-common
-sudo cat <<EOF >/etc/fstab
+sudo bash -c 'cat <<EOF >/etc/fstab
 IP_NFS_SERVER:/source_storage	/source_storage nfs 	defaults    	0   	0
 IP_NFS_SERVER:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
 IP_NFS_SERVER:/web_storage   	/web_storage	nfs 	defaults    	0   	0
-EOF
+EOF' 
 
 sudo mkdir /dc_storage /web_storage /source_storage
 sudo chown cubo:root /dc_storage /web_storage /source_storage
@@ -112,7 +112,6 @@ port = 5432
 name = ideam
 user = portal_web
 password = CDCol_web_2016
-
 
 #La seccion roja modificarla por la ip publica de la api
 [flower]
