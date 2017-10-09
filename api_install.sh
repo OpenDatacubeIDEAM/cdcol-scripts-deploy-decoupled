@@ -105,7 +105,7 @@ sudo mount /web_storage
 cd $HOME
 git clone https://MPMancipe@bitbucket.org/ideam20162/execution-monitor.git
 cd execution-monitor
-CAT <<EOF >
+CAT <<EOF >settings.conf
 [database]
 host = 127.0.0.1
 port = 5432
@@ -114,7 +114,7 @@ user = portal_web
 password = CDCol_web_2016
 
 
-#La secciÃ³n roja modificarla por la ip pÃºblica de la api
+#La sección roja modificarla por la ip pública de la api
 [flower]
 url = http://157.253.198.190:8082
 
@@ -128,4 +128,26 @@ EOF
 
 (crontab -l 2>/dev/null; echo "*   *   *   *   *	/home/cubo/execution-monitor/run.sh >> /home/cubo/execution-monitor/out.log 2>> /home/cubo/execution-monitor/err.log") | crontab -
 
+#CDCOL_CLEANER
+
+cd $HOME
+git clone https://MPMancipe@bitbucket.org/ideam20162/cdcol-cleaner.git
+cd cdcol-cleaner
+sudo chmod 775 ~/cdcol-cleaner/run.sh
+CAT <<EOF >settings.conf
+[database]
+host = 127.0.0.1
+port = 5432
+name = ideam
+user = portal_web
+password = CDCol_web_2016
+ 
+[paths]
+results_path = /web_storage/results
+
+[other]
+lock_file = pid.lock
+days = 360
+EOF
+(crontab -l 2>/dev/null; echo "0   0   *   *   *	/home/cubo/cdcol-cleaner/run.sh >> /home/cubo/cdcol-cleaner/out.log 2>> /home/cubo/cdcol-cleaner/err.log") | crontab -
 
