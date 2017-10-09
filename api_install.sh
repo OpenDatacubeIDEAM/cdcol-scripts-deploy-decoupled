@@ -63,7 +63,7 @@ EOF
 
 ln -s ~/cdcol_celery
 
-sudo cat <<EOF >/etc/systemd/system/gunicorn.service
+sudo bash -c 'cat <<EOF >/etc/systemd/system/gunicorn.service
 [Unit]
 Description=gunicorn daemon
 After=network.target
@@ -77,7 +77,7 @@ ExecStart=/home/cubo/anaconda2/bin/gunicorn --timeout 36000 --bind 0.0.0.0:8000 
  
 [Install]
 WantedBy=multi-user.target
-EOF
+EOF'
 
 sudo systemctl stop gunicorn
 /home/cubo/anaconda2/bin/gunicorn --bind 0.0.0.0:8000 --error-logfile /home/cubo/gunicorn-error.log cdcol.wsgi:application
