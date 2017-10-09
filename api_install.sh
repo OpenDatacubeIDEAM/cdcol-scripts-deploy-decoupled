@@ -24,7 +24,7 @@ cd api-rest
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
 
-cat <<EOF >env_vars
+sudo cat <<EOF >env_vars
 # Connection for Web site database
 WEB_DBHOST='127.0.0.1'
 WEB_DBPORT='5432'
@@ -63,7 +63,7 @@ EOF
 
 ln -s ~/cdcol_celery
 
-cat <<EOF >/etc/systemd/system/gunicorn.service
+sudo cat <<EOF >/etc/systemd/system/gunicorn.service
 [Unit]
 Description=gunicorn daemon
 After=network.target
@@ -89,7 +89,7 @@ sudo systemctl enable gunicorn
 #MOUNT NFS SERVER
 cd $HOME
 sudo apt install nfs-common
-cat <<EOF >
+sudo cat <<EOF >/etc/fstab
 IP_NFS_SERVER:/source_storage	/source_storage nfs 	defaults    	0   	0
 IP_NFS_SERVER:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
 IP_NFS_SERVER:/web_storage   	/web_storage	nfs 	defaults    	0   	0
@@ -105,7 +105,7 @@ sudo mount /web_storage
 cd $HOME
 git clone https://MPMancipe@bitbucket.org/ideam20162/execution-monitor.git
 cd execution-monitor
-CAT <<EOF >settings.conf
+sudo cat <<EOF >settings.conf
 [database]
 host = 127.0.0.1
 port = 5432
@@ -114,7 +114,7 @@ user = portal_web
 password = CDCol_web_2016
 
 
-#La sección roja modificarla por la ip pública de la api
+#La seccion roja modificarla por la ip publica de la api
 [flower]
 url = http://157.253.198.190:8082
 
@@ -134,7 +134,7 @@ cd $HOME
 git clone https://MPMancipe@bitbucket.org/ideam20162/cdcol-cleaner.git
 cd cdcol-cleaner
 sudo chmod 775 ~/cdcol-cleaner/run.sh
-CAT <<EOF >settings.conf
+sudo cat <<EOF >settings.conf
 [database]
 host = 127.0.0.1
 port = 5432
