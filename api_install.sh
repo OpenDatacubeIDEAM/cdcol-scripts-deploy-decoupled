@@ -34,10 +34,10 @@ conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simple
 pip install -r requirements.txt
 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
-read $ipdb
+read ipdb
 
 echo "¿Cuál es la ip del servidor del web?"
-read $ipweb
+read ipweb
 
 sudo cat <<EOF >>env_vars
 # Connection for Web site database
@@ -104,7 +104,7 @@ sudo systemctl enable gunicorn
 #MOUNT NFS SERVER
 cd $HOME
 echo "¿Cuál es la ip del servidor NFS?"
-read $ipnfs
+read ipnfs
 sudo apt install nfs-common
 sudo bash -c 'cat <<EOF >>/etc/fstab
 $ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
