@@ -7,6 +7,15 @@ ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 REPO="https://github.com/cronosnull/agdc-v2.git"
 BRANCH="develop"
 
+#Configurar Flower
+if ! hash "conda" > /dev/null; then
+	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
+	bash ~/instaladores/Anaconda2-4.1.1-Linux-x86_64.sh -b -p $HOME/anaconda2
+	export PATH="$HOME/anaconda2/bin:$PATH"
+	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
+fi
+conda install -c conda-forge flower 
+
 sudo apt-get update
 sudo apt-get install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx virtualenv gunicorn git
 pip install virtualenv
@@ -18,10 +27,17 @@ git clone -b develop https://MPMancipe@bitbucket.org/ideam20162/web-app.git
 cd web-app
 pip install -r requirements.txt
 
-cat <<EOF >~/.bashrc
-export IDEAM_DATABASE_URL="postgres://portal_web:CDCol_web_2016@IP_API_REST/ideam"
-export IDEAM_PRODUCTION_DATABASE_URL="postgres://portal_web:CDCol_web_2016@IP_API_REST/ideam"
-export IDEAM_API_URL="http://IP_API_REST:8000"
+echo "¿Cuál es la ip del servidor de Bases de Datos?"
+read $ipdb
+
+echo "¿Cuál es la ip del API REST?"
+read $ipapi
+
+
+cat <<EOF >>~/.bashrc
+export IDEAM_DATABASE_URL="postgres://portal_web:CDCol_web_2016@$ipdb/ideam"
+export IDEAM_PRODUCTION_DATABASE_URL="postgres://portal_web:CDCol_web_2016@$ipdb/ideam"
+export IDEAM_API_URL="http://$ipapi:8000"
 export IDEAM_MAIL_HOST="smtp.gmail.com"
 export IDEAM_MAIL_USER="cdcolprueba@gmail.com"
 export IDEAM_MAIL_PASSWORD="ideam20162"
@@ -36,16 +52,80 @@ python manage.py migrate
 python manage.py collectstatic
 python manage.py createsuperuser
 
+sudo bash -c 'cat <<EOF >>/etc/systemd/system/gunicorn.service
+[Unit]
+Description=gunicorn daemon
+After=network.target
+ 
+[Service]
+User=cubo
+Group=cubo
+WorkingDirectory=/home/cubo/projects/web-app
+EnvironmentFile=/home/cubo/projects/web-app/.ideam.env
+ExecStart=/home/cubo/v_ideam/bin/gunicorn --timeout 36000 --bind 0.0.0.0:8080 ideam_cdc.wsgi:application
+ 
+[Install]
+WantedBy=multi-user.target
+EOF'
 
-#TODO
+cat <<EOF >>.ideam.env
+IDEAM_PRODUCTION_DATABASE_URL="postgres://portal_web:CDCol_web_2016@$ipdb/ideam"
+IDEAM_DATABASE_URL="postgres://portal_web:CDCol_web_2016@$ipdb/ideam"
+IDEAM_API_URL="http://$ipapi:8000"
+IDEAM_MAIL_HOST="smtp.gmail.com"
+IDEAM_MAIL_USER="cdcolprueba@gmail.com"
+IDEAM_MAIL_PASSWORD="ideam20162"
+IDEAM_MAIL_PORT="587"
+IDEAM_DC_STORAGE_PATH="/dc_storage"
+IDEAM_WEB_STORAGE_PATH="/web_storage"
+IDEAM_TEMPORIZER="3000"
+IDEAM_DAYS_ELAPSED_TO_DELETE_EXECUTION_RESULTS="360"
+IDEAM_ID_ALGORITHM_FOR_CUSTOM_SERVICE="8"
+EOF
+
+sudo systemctl start gunicorn
+sudo systemctl enable gunicorn
+sudo systemctl daemon-reload
+sudo systemctl status gunicorn
+sudo systemctl stop gunicorn
+sudo systemctl daemon-reload
+sudo systemctl start gunicorn
+sudo systemctl enable gunicorn
+sudo systemctl status gunicorn
+
+#Configuracion de Nginx
+sudo bash -c 'cat <<EOF >>/etc/nginx/sites-available/ideam
+server {
+  listen 80;
+ 
+  location /web_storage {
+    alias /web_storage;
+  }
+ 
+  location / {
+    proxy_read_timeout 36000;
+    client_max_body_size 50M;
+    proxy_pass http://127.0.0.1:8080;
+  }
+}
+EOF'
+sudo ln -s /etc/nginx/sites-available/ideam /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl restart nginx
+deactivate
+
+
 
 #MOUNT NFS SERVER
+echo "¿Cuál es la ip del servidor NFS?"
+read $ipnfs
 cd $HOME
 sudo apt install nfs-common
-sudo bash -c 'cat <<EOF >/etc/fstab
-IP_NFS_SERVER:/source_storage	/source_storage nfs 	defaults    	0   	0
-IP_NFS_SERVER:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
-IP_NFS_SERVER:/web_storage   	/web_storage	nfs 	defaults    	0   	0
+sudo bash -c 'cat <<EOF >>/etc/fstab
+$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
+$ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
+$ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
 EOF' 
 
 sudo mkdir /dc_storage /web_storage /source_storage
@@ -53,3 +133,10 @@ sudo chown cubo:root /dc_storage /web_storage /source_storage
 sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
+cd $HOME
+
+#Configuracion CRON envio de correos
+cd projects/web-app/
+(crontab -l 2>/dev/null; echo "*/5 * * * * /home/cubo/projects/web-app/run.sh >> /home/cubo/projects/email_notifier.log 2>> /home/cubo/projects/email_notifier_error.log") | crontab -
+
+

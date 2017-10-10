@@ -9,7 +9,7 @@ ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 REPO="https://github.com/cronosnull/agdc-v2.git"
 BRANCH="develop"
 
-sudo apt install -y openssh-server postgresql-client-9.5 postgresql-contrib-9.5 pgadmin3 git wget htop imagemagick ffmpeg nginx|| exit 1
+sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 postgresql-doc-9.5 libhdf5-doc netcdf-doc libgdal-doc git wget htop rabbitmq-server imagemagick ffmpeg nginx|| exit 1
 
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
@@ -18,22 +18,37 @@ if ! hash "conda" > /dev/null; then
 	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
 fi
 
+sudo rabbitmqctl add_user cdcol cdcol
+sudo rabbitmqctl add_vhost cdcol
+sudo rabbitmqctl set_user_tags cdcol cdcol_tag
+sudo rabbitmqctl set_permissions -p cdcol cdcol ".*" ".*" ".*"
+sudo rabbitmq-plugins enable rabbitmq_management
+sudo rabbitmqctl set_user_tags cdcol cdcol_tag administrator
+sudo service rabbitmq-server restart
+
+
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 git clone https://MPMancipe@bitbucket.org/ideam20162/api-rest.git
 cd api-rest
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
 
-sudo cat <<EOF >env_vars
+echo "¿Cuál es la ip del servidor de Bases de Datos?"
+read $ipdb
+
+echo "¿Cuál es la ip del servidor del web?"
+read $ipweb
+
+sudo cat <<EOF >>env_vars
 # Connection for Web site database
-WEB_DBHOST='127.0.0.1'
+WEB_DBHOST='$ipdb'
 WEB_DBPORT='5432'
 WEB_DBNAME='ideam'
 WEB_DBUSER='portal_web'
 WEB_DBPASSWORD='CDCol_web_2016'
 
 # Connection for Datacube database
-DATACUBE_DBHOST='127.0.0.1'
+DATACUBE_DBHOST='$ipdb'
 DATACUBE_DBPORT='5432'
 DATACUBE_DBNAME='datacube'
 DATACUBE_DBUSER='$(whoami)'
@@ -63,7 +78,7 @@ EOF
 
 ln -s ~/cdcol_celery
 
-sudo bash -c 'cat <<EOF >/etc/systemd/system/gunicorn.service
+sudo bash -c 'cat <<EOF >>/etc/systemd/system/gunicorn.service
 [Unit]
 Description=gunicorn daemon
 After=network.target
@@ -88,11 +103,13 @@ sudo systemctl enable gunicorn
 
 #MOUNT NFS SERVER
 cd $HOME
+echo "¿Cuál es la ip del servidor NFS?"
+read $ipnfs
 sudo apt install nfs-common
-sudo bash -c 'cat <<EOF >/etc/fstab
-IP_NFS_SERVER:/source_storage	/source_storage nfs 	defaults    	0   	0
-IP_NFS_SERVER:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
-IP_NFS_SERVER:/web_storage   	/web_storage	nfs 	defaults    	0   	0
+sudo bash -c 'cat <<EOF >>/etc/fstab
+$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
+$ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
+$ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
 EOF' 
 
 sudo mkdir /dc_storage /web_storage /source_storage
@@ -105,9 +122,9 @@ sudo mount /web_storage
 cd $HOME
 git clone https://MPMancipe@bitbucket.org/ideam20162/execution-monitor.git
 cd execution-monitor
-sudo cat <<EOF >settings.conf
+sudo cat <<EOF >>settings.conf
 [database]
-host = 127.0.0.1
+host = $ipdb
 port = 5432
 name = ideam
 user = portal_web
@@ -115,7 +132,7 @@ password = CDCol_web_2016
 
 #La seccion roja modificarla por la ip publica de la api
 [flower]
-url = http://157.253.198.190:8082
+url = http://$ipweb:8082
 
 [other]
 lock_file = pid.lock
@@ -133,9 +150,9 @@ cd $HOME
 git clone https://MPMancipe@bitbucket.org/ideam20162/cdcol-cleaner.git
 cd cdcol-cleaner
 sudo chmod 775 ~/cdcol-cleaner/run.sh
-sudo cat <<EOF >settings.conf
+sudo cat <<EOF >>settings.conf
 [database]
-host = 127.0.0.1
+host = $ipdb
 port = 5432
 name = ideam
 user = portal_web
