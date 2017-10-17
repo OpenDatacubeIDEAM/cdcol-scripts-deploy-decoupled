@@ -7,12 +7,13 @@ sudo mkdir /dc_storage /source_storage /web_storage
 sudo chown cubo:root /dc_storage /source_storage /web_storage
 
 echo "¿Cuál es la ip publica del servidor del web?"
-read $ipweb
-
-sudo bash -c 'cat <<EOF >>/etc/exports
+read ipweb
+sudo chmod o+w /etc/exports
+cat <<EOF >>/etc/exports
 /dc_storage     		192.168.0.0/16(rw,sync,no_subtree_check) $ipweb/32(rw,sync,no_subtree_check)
 /source_storage         192.168.0.0/16(rw,sync,no_subtree_check) $ipweb/32(rw,sync,no_subtree_check)
 /web_storage    		192.168.0.0/16(rw,sync,no_subtree_check) $ipweb/32(rw,sync,no_subtree_check)
 
-EOF'
+EOF
+sudo chmod o-w /etc/exports
 sudo systemctl restart nfs-kernel-server
