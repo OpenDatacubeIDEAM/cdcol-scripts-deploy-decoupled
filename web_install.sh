@@ -18,14 +18,14 @@ read ipdb
 echo "¿Cuál es la ip del API REST?"
 read ipapi
 
-#Configurar Flower
+
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
 	bash ~/instaladores/Anaconda2-4.1.1-Linux-x86_64.sh -b -p $HOME/anaconda2
 	export PATH="$HOME/anaconda2/bin:$PATH"
 	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
 fi
-
+#Configurar Flower
 conda install -c conda-forge flower celery=3.1.23
 nohup celery flower --broker=amqp://cdcol:cdcol@$ipapi/cdcol --port=8082 &
 
@@ -61,6 +61,7 @@ python manage.py migrate
 python manage.py collectstatic
 python manage.py createsuperuser
 
+sudo touch /etc/systemd/system/gunicorn.service
 sudo chmod o+w /etc/systemd/system/gunicorn.service
 cat <<EOF >/etc/systemd/system/gunicorn.service
 [Unit]
@@ -105,6 +106,7 @@ sudo systemctl enable gunicorn
 sudo systemctl status gunicorn
 
 #Configuracion de Nginx
+sudo touch /etc/nginx/sites-available/ideam
 sudo chmod o+w /etc/nginx/sites-available/ideam
 cat <<EOF >>/etc/nginx/sites-available/ideam
 server {
