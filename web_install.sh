@@ -40,10 +40,6 @@ git clone -b develop git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.g
 cd web-app
 pip install -r requirements.txt
 
-
-
-
-cat <<EOF >>~/.bashrc
 export IDEAM_DATABASE_URL="postgres://portal_web:CDCol_web_2016@$ipdb/ideam"
 export IDEAM_PRODUCTION_DATABASE_URL="postgres://portal_web:CDCol_web_2016@$ipdb/ideam"
 export IDEAM_API_URL="http://$ipapi:8000"
@@ -53,11 +49,9 @@ export IDEAM_MAIL_PASSWORD="ideam20162"
 export IDEAM_MAIL_PORT="587"
 export IDEAM_DC_STORAGE_PATH="/dc_storage"
 export IDEAM_WEB_STORAGE_PATH="/web_storage"
-EOF
 
-chmod a+x ~/.bashrc
-PS1='$ '
-source ~/.bashrc
+
+
 source ~/v_ideam/bin/activate
 python manage.py migrate
 python manage.py collectstatic
