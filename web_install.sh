@@ -1,11 +1,22 @@
 #!/bin/bash
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 
+sudo apt-get update
+
+git clone http://usuario@gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
+mv CDCol/* ~/
+
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 REPO="https://github.com/cronosnull/agdc-v2.git"
 BRANCH="develop"
+
+echo "¿Cuál es la ip del servidor de Bases de Datos?"
+read ipdb
+
+echo "¿Cuál es la ip del API REST?"
+read ipapi
 
 #Configurar Flower
 if ! hash "conda" > /dev/null; then
@@ -14,7 +25,9 @@ if ! hash "conda" > /dev/null; then
 	export PATH="$HOME/anaconda2/bin:$PATH"
 	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
 fi
-conda install -c conda-forge flower 
+
+conda install -c conda-forge flower celery=3.1.23
+nohup celery flower --broker=amqp://cdcol:cdcol@$ipapi/cdcol --port=8082 &
 
 sudo apt-get update
 sudo apt-get install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx virtualenv gunicorn git
@@ -27,11 +40,7 @@ git clone -b develop https://MPMancipe@bitbucket.org/ideam20162/web-app.git
 cd web-app
 pip install -r requirements.txt
 
-echo "¿Cuál es la ip del servidor de Bases de Datos?"
-read $ipdb
 
-echo "¿Cuál es la ip del API REST?"
-read $ipapi
 
 
 cat <<EOF >>~/.bashrc
@@ -52,7 +61,8 @@ python manage.py migrate
 python manage.py collectstatic
 python manage.py createsuperuser
 
-sudo bash -c 'cat <<EOF >>/etc/systemd/system/gunicorn.service
+sudo chmod o+w /etc/systemd/system/gunicorn.service
+cat <<EOF >/etc/systemd/system/gunicorn.service
 [Unit]
 Description=gunicorn daemon
 After=network.target
@@ -66,7 +76,8 @@ ExecStart=/home/cubo/v_ideam/bin/gunicorn --timeout 36000 --bind 0.0.0.0:8080 id
  
 [Install]
 WantedBy=multi-user.target
-EOF'
+EOF
+sudo chmod o-w /etc/systemd/system/gunicorn.service
 
 cat <<EOF >>.ideam.env
 IDEAM_PRODUCTION_DATABASE_URL="postgres://portal_web:CDCol_web_2016@$ipdb/ideam"
@@ -94,7 +105,8 @@ sudo systemctl enable gunicorn
 sudo systemctl status gunicorn
 
 #Configuracion de Nginx
-sudo bash -c 'cat <<EOF >>/etc/nginx/sites-available/ideam
+sudo chmod o+w /etc/nginx/sites-available/ideam
+cat <<EOF >>/etc/nginx/sites-available/ideam
 server {
   listen 80;
  
@@ -108,7 +120,9 @@ server {
     proxy_pass http://127.0.0.1:8080;
   }
 }
-EOF'
+EOF
+sudo chmod o-w /etc/nginx/sites-available/ideam
+
 sudo ln -s /etc/nginx/sites-available/ideam /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default
 sudo nginx -t
@@ -119,14 +133,16 @@ deactivate
 
 #MOUNT NFS SERVER
 echo "¿Cuál es la ip del servidor NFS?"
-read $ipnfs
+read ipnfs
 cd $HOME
 sudo apt install nfs-common
-sudo bash -c 'cat <<EOF >>/etc/fstab
+sudo chmod o+w /etc/fstab
+cat <<EOF >>/etc/fstab
 $ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
 $ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
 $ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
-EOF' 
+EOF
+sudo chmod o-w /etc/fstab
 
 sudo mkdir /dc_storage /web_storage /source_storage
 sudo chown cubo:root /dc_storage /web_storage /source_storage
