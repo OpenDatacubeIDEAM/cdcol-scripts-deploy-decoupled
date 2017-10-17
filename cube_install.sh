@@ -1,10 +1,16 @@
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 
+sudo apt-get update
+
+
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 REPO="https://github.com/cronosnull/agdc-v2.git"
 BRANCH="develop"
+
+git clone http://usuario@gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
+mv CDCol/* ~/
 
 #Prerequisites installation: 
 while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
@@ -28,9 +34,9 @@ git checkout $BRANCH
 python setup.py install
 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
-read $ipdb
+read ipdb
 
-cat <<EOF >>~/.datacube.conf
+cat <<EOF >~/.datacube.conf
 [datacube]
 db_database: datacube
 
@@ -69,13 +75,15 @@ nohup celery -A cdcol_celery flower --port=8082 --address=$ip --persistent &
 #MOUNT NFS SERVER
 cd $HOME
 echo "¿Cuál es la ip del servidor NFS?"
-read $ipnfs
+read ipnfs
 sudo apt install nfs-common
-sudo bash -c 'cat <<EOF >>/etc/fstab
+sudo chmod o+w /etc/fstab
+cat <<EOF >>/etc/fstab
 $ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
 $ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
 $ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
-EOF' 
+EOF
+sudo chmod o-w /etc/fstab
 
 sudo mkdir /dc_storage /web_storage /source_storage
 sudo chown cubo:root /dc_storage /web_storage /source_storage
