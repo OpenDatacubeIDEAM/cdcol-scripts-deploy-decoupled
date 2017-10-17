@@ -3,7 +3,7 @@ if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root 
 
 sudo apt-get update
 
-git clone http://usuario@gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
 mv CDCol/* ~/
 
 USUARIO_CUBO="$(whoami)"
@@ -31,7 +31,7 @@ sudo service rabbitmq-server restart
 
 
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
-git clone https://MPMancipe@bitbucket.org/ideam20162/api-rest.git
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git
 cd api-rest
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
@@ -126,7 +126,7 @@ sudo mount /web_storage
 
 #EXECUTION MONITOR
 cd $HOME
-git clone https://MPMancipe@bitbucket.org/ideam20162/execution-monitor.git
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/execution-monitor.git
 cd execution-monitor
 sudo cat <<EOF >settings.conf
 [database]
@@ -153,7 +153,7 @@ EOF
 #CDCOL_CLEANER
 
 cd $HOME
-git clone https://MPMancipe@bitbucket.org/ideam20162/cdcol-cleaner.git
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/cdcol-cleaner.git
 cd cdcol-cleaner
 sudo chmod 775 ~/cdcol-cleaner/run.sh
 sudo cat <<EOF >settings.conf
