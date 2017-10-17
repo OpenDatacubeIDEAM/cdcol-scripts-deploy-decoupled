@@ -80,6 +80,7 @@ RESULTS='/web_storage/results'
 EOF
 
 ln -s ~/cdcol_celery
+sudo touch /etc/systemd/system/gunicorn.service
 sudo chmod o+w /etc/systemd/system/gunicorn.service
 cat <<EOF >/etc/systemd/system/gunicorn.service
 [Unit]
