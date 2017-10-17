@@ -3,6 +3,9 @@ if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root 
 
 sudo apt-get update
 
+git clone http://usuario@gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
+mv CDCol/* ~/
+
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
@@ -39,7 +42,7 @@ read ipdb
 echo "¿Cuál es la ip del servidor del web?"
 read ipweb
 
-sudo cat <<EOF >>env_vars
+sudo cat <<EOF >env_vars
 # Connection for Web site database
 WEB_DBHOST='$ipdb'
 WEB_DBPORT='5432'
@@ -77,8 +80,8 @@ RESULTS='/web_storage/results'
 EOF
 
 ln -s ~/cdcol_celery
-
-sudo bash -c 'cat <<EOF >>/etc/systemd/system/gunicorn.service
+sudo chmod o+w /etc/systemd/system/gunicorn.service
+cat <<EOF >/etc/systemd/system/gunicorn.service
 [Unit]
 Description=gunicorn daemon
 After=network.target
@@ -92,7 +95,8 @@ ExecStart=/home/cubo/anaconda2/bin/gunicorn --timeout 36000 --bind 0.0.0.0:8000 
  
 [Install]
 WantedBy=multi-user.target
-EOF'
+EOF
+sudo chmod o-w /etc/systemd/system/gunicorn.service
 
 sudo systemctl stop gunicorn
 /home/cubo/anaconda2/bin/gunicorn --bind 0.0.0.0:8000 --error-logfile /home/cubo/gunicorn-error.log cdcol.wsgi:application
@@ -106,11 +110,13 @@ cd $HOME
 echo "¿Cuál es la ip del servidor NFS?"
 read ipnfs
 sudo apt install nfs-common
-sudo bash -c 'cat <<EOF >>/etc/fstab
+sudo chmod o+w /etc/fstab
+sudo cat <<EOF >>/etc/fstab
 $ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
 $ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
 $ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
-EOF' 
+EOF
+sudo chmod o-w /etc/fstab
 
 sudo mkdir /dc_storage /web_storage /source_storage
 sudo chown cubo:root /dc_storage /web_storage /source_storage
@@ -122,7 +128,7 @@ sudo mount /web_storage
 cd $HOME
 git clone https://MPMancipe@bitbucket.org/ideam20162/execution-monitor.git
 cd execution-monitor
-sudo cat <<EOF >>settings.conf
+sudo cat <<EOF >settings.conf
 [database]
 host = $ipdb
 port = 5432
@@ -150,7 +156,7 @@ cd $HOME
 git clone https://MPMancipe@bitbucket.org/ideam20162/cdcol-cleaner.git
 cd cdcol-cleaner
 sudo chmod 775 ~/cdcol-cleaner/run.sh
-sudo cat <<EOF >>settings.conf
+sudo cat <<EOF >settings.conf
 [database]
 host = $ipdb
 port = 5432
