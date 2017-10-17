@@ -5,6 +5,11 @@
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 #Prerequisites installation: 
 
+sudo apt-get update
+
+git clone http://usuario@gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
+mv CDCol/* ~/
+
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
@@ -33,7 +38,7 @@ git checkout $BRANCH
 python setup.py install
 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
-read $ipdb
+read ipdb
 
 cat <<EOF >>~/.datacube.conf
 [datacube]
@@ -73,12 +78,14 @@ datacube product add ~/agdc-v2/docs/config_samples/dataset_types/modis_tiles.yam
 cd $HOME
 sudo apt install nfs-common
 echo "¿Cuál es la ip del servidor NFS?"
-read $ipnfs
-sudo bash -c 'cat <<EOF >>/etc/fstab
+read ipnfs
+sudo chmod o+w /etc/fstab
+cat <<EOF >>/etc/fstab
 $ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
 $ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
 $ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
-EOF' 
+EOF
+sudo chmod o-w /etc/fstab
 
 sudo mkdir /dc_storage /web_storage /source_storage
 sudo chown cubo:root /dc_storage /web_storage /source_storage
@@ -90,7 +97,7 @@ sudo mount /web_storage
 conda install -c conda-forge psycopg2 PyYAML
 git clone https://MPMancipe@bitbucket.org/ideam20162/ingestion-scheduler.git
 cd ingestion-scheduler/scripts
-cat <<EOF >>settings.conf
+cat <<EOF >settings.conf
 [database]
 host = $ipdb
 port = 5432 
