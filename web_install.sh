@@ -50,9 +50,9 @@ export IDEAM_MAIL_PORT="587"
 export IDEAM_DC_STORAGE_PATH="/dc_storage"
 export IDEAM_WEB_STORAGE_PATH="/web_storage"
 
+echo IDEAM_DATABASE_URL
+echo $IDEAM_DATABASE_URL
 
-
-source ~/v_ideam/bin/activate
 python manage.py migrate
 python manage.py collectstatic
 python manage.py createsuperuser
