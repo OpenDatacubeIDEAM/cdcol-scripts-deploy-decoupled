@@ -3,7 +3,7 @@ if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root 
 
 sudo apt-get update
 
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
+git clone https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
 mv CDCol/* ~/
 
 USUARIO_CUBO="$(whoami)"
@@ -36,7 +36,7 @@ virtualenv v_ideam
 source v_ideam/bin/activate
 mkdir projects
 cd projects
-git clone -b develop git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git
+git clone -b develop https://MPMancipe@bitbucket.org/ideam20162/web-app.git
 cd web-app
 pip install -r requirements.txt
 
