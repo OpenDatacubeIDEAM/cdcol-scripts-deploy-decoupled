@@ -1,13 +1,12 @@
 
 
 
-
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 #Prerequisites installation: 
 
 sudo apt-get update
 
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
+git clone https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
 mv CDCol/* ~/
 
 USUARIO_CUBO="$(whoami)"
@@ -95,7 +94,7 @@ sudo mount /web_storage
 
 #Configuracion del CRON de ingesta
 conda install -c conda-forge psycopg2 PyYAML
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git
+git clone https://MPMancipe@bitbucket.org/ideam20162/ingestion-scheduler.git
 cd ingestion-scheduler/scripts
 cat <<EOF >settings.conf
 [database]
