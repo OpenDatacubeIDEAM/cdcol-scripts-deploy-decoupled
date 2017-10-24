@@ -69,6 +69,8 @@ sudo rabbitmq-plugins enable rabbitmq_management
 sudo rabbitmqctl set_user_tags cdcol cdcol_tag administrator
 sudo service rabbitmq-server restart
 
+cd $HOME
+
 git clone https://MPMancipe@bitbucket.org/ideam20162/api-rest.git
 cd api-rest
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
