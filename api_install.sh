@@ -21,6 +21,46 @@ if ! hash "conda" > /dev/null; then
 	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
 fi
 
+conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+
+
+git clone $REPO
+cd agdc-v2
+git checkout $BRANCH
+python setup.py install
+
+echo "¿Cuál es la ip del servidor de Bases de Datos?"
+read ipdb
+
+cat <<EOF >~/.datacube.conf
+[datacube]
+db_database: datacube
+
+# A blank host will use a local socket. Specify a hostname to use TCP.
+db_hostname: $ipdb
+
+# Credentials are optional: you might have other Postgres authentication configured.
+# The default username otherwise is the current user id.
+db_username: $USUARIO_CUBO
+db_password: $PASSWORD_CUBO
+EOF
+
+datacube -v system init
+source $HOME/.bashrc
+sudo groupadd ingesters
+sudo mkdir /dc_storage
+sudo mkdir /source_storage
+sudo chown $USUARIO_CUBO:ingesters /dc_storage
+sudo chmod -R g+rwxs /dc_storage
+sudo chown $USUARIO_CUBO:ingesters /source_storage
+sudo chmod -R g+rwxs /source_storage
+sudo mkdir /web_storage
+sudo chown $USUARIO_CUBO /web_storage
+#Crear un usuario ingestor
+pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes")
+sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002
+
+
 sudo rabbitmqctl add_user cdcol cdcol
 sudo rabbitmqctl add_vhost cdcol
 sudo rabbitmqctl set_user_tags cdcol cdcol_tag
@@ -29,15 +69,10 @@ sudo rabbitmq-plugins enable rabbitmq_management
 sudo rabbitmqctl set_user_tags cdcol cdcol_tag administrator
 sudo service rabbitmq-server restart
 
-
-conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 git clone https://MPMancipe@bitbucket.org/ideam20162/api-rest.git
 cd api-rest
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
-
-echo "¿Cuál es la ip del servidor de Bases de Datos?"
-read ipdb
 
 echo "¿Cuál es la ip del servidor del web?"
 read ipweb
