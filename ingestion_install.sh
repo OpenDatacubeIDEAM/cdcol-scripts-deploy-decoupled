@@ -1,5 +1,4 @@
 
-
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 #Prerequisites installation: 
 
@@ -67,7 +66,7 @@ pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes")
 sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002
 
 #TODO: At this point an empty datacube is installed. Next steps are create datasets types, index datasets and ingest.  
-datacube product add ~/agdc-v2/docs/config_samples/dataset_types/ls7_scenes.yaml
+#datacube product add ~/agdc-v2/docs/config_samples/dataset_types/ls7_scenes.yaml
 datacube product add ~/agdc-v2/docs/config_samples/dataset_types/ls5_scenes.yaml
 datacube product add ~/agdc-v2/docs/config_samples/dataset_types/ls8_scenes.yaml
 datacube product add ~/agdc-v2/docs/config_samples/dataset_types/modis_tiles.yaml
