@@ -1,17 +1,16 @@
-
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 #Prerequisites installation: 
 
 sudo apt-get update
 
-git clone https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
+git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
 mv CDCol/* ~/
 
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
-REPO="https://github.com/cronosnull/agdc-v2.git"
-BRANCH="develop"
+REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
+BRANCH="desacoplado"
 
 while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    echo "Waiting while other process ends installs (dpkg/lock is locked)"
@@ -92,7 +91,7 @@ sudo mount /web_storage
 
 #Configuracion del CRON de ingesta
 conda install -c conda-forge psycopg2 PyYAML
-git clone https://MPMancipe@bitbucket.org/ideam20162/ingestion-scheduler.git
+git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git
 cd ingestion-scheduler
 cat <<EOF >settings.conf
 [database]
