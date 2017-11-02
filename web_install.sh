@@ -3,14 +3,14 @@ if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root 
 
 sudo apt-get update
 
-git clone https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
+git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
 mv CDCol/* ~/
 
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
-REPO="https://github.com/cronosnull/agdc-v2.git"
-BRANCH="develop"
+REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
+BRANCH="desacoplado"
 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
 read ipdb
@@ -36,7 +36,7 @@ virtualenv v_ideam
 source v_ideam/bin/activate
 mkdir projects
 cd projects
-git clone -b develop https://gitlab.virtual.uniandes.edu.co/datacube-ideam/web-app.git
+git clone -b develop git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git
 cd web-app
 pip install -r requirements.txt
 
