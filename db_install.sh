@@ -6,10 +6,6 @@ sudo apt-get update
 
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
-ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
-REPO="https://github.com/cronosnull/agdc-v2.git"
-BRANCH="develop"
-
 
 sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libhdf5-serial-dev hdf5-tools pgadmin3 postgresql-doc-9.5 libhdf5-doc git wget htop rabbitmq-server || exit 1
 
