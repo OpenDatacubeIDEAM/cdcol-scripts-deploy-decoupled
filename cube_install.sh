@@ -6,10 +6,10 @@ sudo apt-get update
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
-REPO="https://github.com/cronosnull/agdc-v2.git"
-BRANCH="develop"
+REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
+BRANCH="desacoplado"
 
-git clone https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol.git
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
 mv CDCol/* ~/
 
 #Prerequisites installation: 
