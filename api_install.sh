@@ -191,7 +191,7 @@ EOF
 #CDCOL_CLEANER
 
 cd $HOME
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/cdcol-cleaner.git
 cd cdcol-cleaner
 sudo chmod 775 ~/cdcol-cleaner/run.sh
 sudo cat <<EOF >settings.conf
