@@ -9,8 +9,8 @@ mv CDCol/* ~/
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
-REPO="https://github.com/cronosnull/agdc-v2.git"
-BRANCH="develop"
+REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
+BRANCH="desacoplado"
 
 sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 postgresql-doc-9.5 libhdf5-doc netcdf-doc libgdal-doc git wget htop rabbitmq-server imagemagick ffmpeg nginx|| exit 1
 
