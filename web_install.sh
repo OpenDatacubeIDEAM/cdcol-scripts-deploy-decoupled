@@ -36,7 +36,7 @@ virtualenv v_ideam
 source v_ideam/bin/activate
 mkdir projects
 cd projects
-git clone -b develop git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git
 cd web-app
 pip install -r requirements.txt
 
