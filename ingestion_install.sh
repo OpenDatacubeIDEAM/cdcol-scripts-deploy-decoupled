@@ -27,6 +27,8 @@ if ! hash "conda" > /dev/null; then
 fi
 
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+pip install --upgrade pip
+pip install rasterio==1.0a9 --force-reinstall
 
 git clone $REPO
 cd agdc-v2
