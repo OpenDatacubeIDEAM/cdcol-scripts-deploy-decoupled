@@ -11,7 +11,7 @@ read ipweb
 sudo chmod o+w /etc/exports
 cat <<EOF >>/etc/exports
 /dc_storage     		192.168.0.0/16(rw,sync,no_subtree_check) $ipweb/32(rw,sync,no_subtree_check)
-/source_storage         192.168.0.0/16(rw,sync,no_subtree_check) $ipweb/32(rw,sync,no_subtree_check)
+#/source_storage         192.168.0.0/16(rw,sync,no_subtree_check) $ipweb/32(rw,sync,no_subtree_check)
 /web_storage    		192.168.0.0/16(rw,sync,no_subtree_check) $ipweb/32(rw,sync,no_subtree_check)
 
 EOF
