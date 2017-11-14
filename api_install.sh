@@ -150,7 +150,7 @@ read ipnfs
 sudo apt install nfs-common
 sudo chmod o+w /etc/fstab
 sudo cat <<EOF >>/etc/fstab
-$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
+#$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
 $ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
 $ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
 EOF
