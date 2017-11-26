@@ -1,5 +1,11 @@
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 
+echo "¿Cuál es la ip del servidor de Bases de Datos?"
+read ipdb
+
+echo "¿Cuál es la ip del servidor NFS?"
+read ipnfs
+
 sudo apt-get update
 
 
@@ -36,8 +42,7 @@ cd agdc-v2
 git checkout $BRANCH
 python setup.py install
 
-echo "¿Cuál es la ip del servidor de Bases de Datos?"
-read ipdb
+
 
 cat <<EOF >~/.datacube.conf
 [datacube]
@@ -77,8 +82,7 @@ nohup celery -A cdcol_celery flower --port=8082 --address=$ip --persistent &
 
 #MOUNT NFS SERVER
 cd $HOME
-echo "¿Cuál es la ip del servidor NFS?"
-read ipnfs
+
 sudo apt install nfs-common
 sudo chmod o+w /etc/fstab
 cat <<EOF >>/etc/fstab
