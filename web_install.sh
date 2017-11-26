@@ -1,6 +1,15 @@
 #!/bin/bash
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 
+echo "¿Cuál es la ip del servidor de Bases de Datos?"
+read ipdb
+
+echo "¿Cuál es la ip del API REST?"
+read ipapi
+
+echo "¿Cuál es la ip del servidor NFS?"
+read ipnfs
+
 sudo apt-get update
 
 git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
@@ -12,11 +21,7 @@ ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
 BRANCH="desacoplado"
 
-echo "¿Cuál es la ip del servidor de Bases de Datos?"
-read ipdb
 
-echo "¿Cuál es la ip del API REST?"
-read ipapi
 
 
 if ! hash "conda" > /dev/null; then
@@ -130,8 +135,7 @@ deactivate
 
 
 #MOUNT NFS SERVER
-echo "¿Cuál es la ip del servidor NFS?"
-read ipnfs
+
 cd $HOME
 sudo apt install nfs-common
 sudo chmod o+w /etc/fstab
