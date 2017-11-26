@@ -1,6 +1,12 @@
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 #Prerequisites installation: 
 
+echo "¿Cuál es la ip del servidor de Bases de Datos?"
+read ipdb
+
+echo "¿Cuál es la ip del servidor NFS?"
+read ipnfs
+
 sudo apt-get update
 
 git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
@@ -35,8 +41,7 @@ cd agdc-v2
 git checkout $BRANCH
 python setup.py install
 
-echo "¿Cuál es la ip del servidor de Bases de Datos?"
-read ipdb
+
 
 cat <<EOF >>~/.datacube.conf
 [datacube]
@@ -75,8 +80,7 @@ datacube product add ~/agdc-v2/docs/config_samples/dataset_types/modis_tiles.yam
 #MOUNT NFS SERVER
 cd $HOME
 sudo apt install nfs-common
-echo "¿Cuál es la ip del servidor NFS?"
-read ipnfs
+
 sudo chmod o+w /etc/fstab
 cat <<EOF >>/etc/fstab
 #$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
