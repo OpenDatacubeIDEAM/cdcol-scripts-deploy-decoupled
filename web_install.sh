@@ -119,7 +119,8 @@ server {
  
   location / {
     proxy_read_timeout 36000;
-    proxy_set_header Host $http_host;;
+    client_max_body_size 50M;
+    proxy_set_header Host $http_host;
     proxy_pass http://127.0.0.1:8080;
   }
 }
