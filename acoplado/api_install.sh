@@ -92,7 +92,7 @@ sudo rabbitmq-plugins enable rabbitmq_management
 sudo rabbitmqctl set_user_tags cdcol cdcol_tag administrator
 sudo service rabbitmq-server restart
 
-conda install -c conda-forge celery=3.1.23
+conda install -c conda-forge flower celery=3.1.23
 ip=`hostname -I | awk '{ print $1 }'`
 echo "iniciando celery en la ip $ip en el puerto 8082"
 nohup celery -A cdcol_celery worker --loglevel=info &
