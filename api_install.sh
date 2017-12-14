@@ -166,31 +166,7 @@ sudo mount /dc_storage
 #sudo mount /source_storage
 sudo mount /web_storage
 
-#EXECUTION MONITOR
-cd $HOME
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/execution-monitor.git
-cd execution-monitor
-sudo cat <<EOF >settings.conf
-[database]
-host = $ipdb
-port = 5432
-name = ideam
-user = portal_web
-password = CDCol_web_2016
 
-#La seccion roja modificarla por la ip publica de la api
-[flower]
-url = http://$ipweb:8082
-
-[other]
-lock_file = pid.lock
-results_path = /web_storage/results
-make_mosaic_script = /home/cubo/execution-monitor/scripts/make_mosaic.sh
-make_gif_script = /home/cubo/execution-monitor/scripts/generate_gif.sh
-gif_algorithm_id = 0
-EOF
-
-(crontab -l 2>/dev/null; echo "*   *   *   *   *	/home/cubo/execution-monitor/run.sh >> /home/cubo/execution-monitor/out.log 2>> /home/cubo/execution-monitor/err.log") | crontab -
 
 #CDCOL_CLEANER
 

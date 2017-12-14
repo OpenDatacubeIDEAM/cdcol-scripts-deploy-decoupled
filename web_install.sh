@@ -31,8 +31,31 @@ if ! hash "conda" > /dev/null; then
 	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
 fi
 #Configurar Flower
+
 conda install -c conda-forge flower celery=3.1.23
-nohup celery flower --broker=amqp://cdcol:cdcol@$ipapi/cdcol --port=8082 &
+sudo touch /etc/systemd/system/flower.service
+sudo chmod o+w /etc/systemd/system/flower.service
+cat <<EOF >/etc/systemd/system/flower.service
+[Unit]
+Description=flower daemon
+
+[Service]
+User=cubo
+Group=cubo
+WorkingDirectory=/home/cubo/cdcol_celery
+ExecStart=/home/cubo/anaconda2/bin/flower --broker=amqp://cdcol:cdcol@$ipapi/cdcol --port=8082 --loglevel=info
+Restart=on-failure
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo chmod o-w /etc/systemd/system/flower.service
+echo "Iniciando flower en el puerto 8082"
+sudo systemctl daemon-reload
+sudo systemctl start flower
+sudo systemctl enable flower
+
 
 sudo apt-get update
 sudo apt-get install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx virtualenv gunicorn git

@@ -73,10 +73,28 @@ pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes")
 sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002
 
 conda install -c conda-forge celery=3.1.23
-ip=`hostname -I | awk '{ print $1 }'`
-echo "iniciando celery en la ip $ip en el puerto 8082"
-nohup celery -A cdcol_celery worker --loglevel=info &
-nohup celery -A cdcol_celery flower --port=8082 --address=$ip --persistent &
+sudo touch /etc/systemd/system/celery.service
+sudo chmod o+w /etc/systemd/system/celery.service
+cat <<EOF >/etc/systemd/system/celery.service
+[Unit]
+Description=celery daemon
+After=network.target
+
+[Service]
+Type=simple
+User=cubo
+Group=cubo
+WorkingDirectory=/home/cubo
+ExecStart=/home/cubo/anaconda2/bin/celery -A cdcol_celery worker --loglevel=info
+
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo chmod o-w /etc/systemd/system/celery.service
+sudo systemctl daemon-reload
+sudo systemctl start celery
+sudo systemctl enable celery
 
 
 

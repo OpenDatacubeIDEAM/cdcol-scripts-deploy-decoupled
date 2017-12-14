@@ -23,21 +23,6 @@ BRANCH="desacoplado"
 
 sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 postgresql-doc-9.5 libhdf5-doc netcdf-doc libgdal-doc git wget htop rabbitmq-server imagemagick ffmpeg nginx|| exit 1
 
-sudo -u postgres psql postgres<<EOF
-create user $USUARIO_CUBO with password '$PASSWORD_CUBO';
-alter user $USUARIO_CUBO createdb;
-alter user $USUARIO_CUBO createrole;
-alter user $USUARIO_CUBO superuser;
-EOF
-
-createdb datacube
-
-sudo -u postgres psql postgres<<EOF
-CREATE DATABASE ideam;
-\c ideam
-CREATE USER portal_web with password 'CDCol_web_2016';
-EOF
-
 
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
@@ -95,8 +80,50 @@ sudo service rabbitmq-server restart
 conda install -c conda-forge flower celery=3.1.23
 ip=`hostname -I | awk '{ print $1 }'`
 echo "iniciando celery en la ip $ip en el puerto 8082"
-nohup celery -A cdcol_celery worker --loglevel=info &
-nohup celery -A cdcol_celery flower --port=8082 --address=$ip --persistent &
+sudo touch /etc/systemd/system/celery.service
+sudo chmod o+w /etc/systemd/system/celery.service
+cat <<EOF >/etc/systemd/system/celery.service
+[Unit]
+Description=celery daemon
+After=network.target
+
+[Service]
+Type=simple
+User=cubo
+Group=cubo
+WorkingDirectory=/home/cubo
+ExecStart=/home/cubo/anaconda2/bin/celery -A cdcol_celery worker --loglevel=info
+
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo chmod o-w /etc/systemd/system/celery.service
+sudo systemctl daemon-reload
+sudo systemctl start celery
+sudo systemctl enable celery
+
+sudo touch /etc/systemd/system/flower.service
+sudo chmod o+w /etc/systemd/system/flower.service
+cat <<EOF >/etc/systemd/system/flower.service
+[Unit]
+Description=flower daemon
+
+[Service]
+User=cubo
+Group=cubo
+WorkingDirectory=/home/cubo/cdcol_celery
+ExecStart=/home/cubo/anaconda2/bin/flower --broker=amqp://cdcol:cdcol@$ip/cdcol --port=8082 --loglevel=info
+Restart=on-failure
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo chmod o-w /etc/systemd/system/flower.service
+sudo systemctl daemon-reload
+sudo systemctl start flower
+sudo systemctl enable flower
 
 cd $HOME
 
