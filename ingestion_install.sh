@@ -151,3 +151,11 @@ gif_algorithm_id = 0
 EOF
 
 (crontab -l 2>/dev/null; echo "*   *   *   *   *	/home/cubo/execution-monitor/run.sh >> /home/cubo/execution-monitor/out.log 2>> /home/cubo/execution-monitor/err.log") | crontab -
+
+#GEOTIFF CONVERTER
+cd $HOME
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/geotiff-converter.git
+cd geotiff-converter
+sudo cat <<EOF >settings.conf
+
+EOF
