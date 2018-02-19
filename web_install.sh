@@ -135,14 +135,35 @@ sudo chmod o+w /etc/nginx/sites-available/ideam
 cat <<EOF >>/etc/nginx/sites-available/ideam
 server {
   listen 80;
- 
+
+ location ~ ^/execution/download/image/(?<exec>[0-9]+)/(?<archivo>.*)$ {
+        alias /web_storage/results/$exec/$archivo;
+  }
+
+  location ~ ^/execution/download/zip/(?<exec>[0-9]+)/(?<param>.+)/(?<archivo>.*)$ {
+        alias /web_storage/media_root/input/$exec/$param/$archivo;
+  }
+
+  location ~ ^/storage/download/file/(?<storage>.*)/(?<file>.+)$ {
+        alias /dc_storage/$storage/$file;
+  }
+
+  location ~ ^/storage/download/image/(?<storage>.*)/(?<file>.+)$ {
+        alias /dc_storage/$storage/$file;
+  }
+
+  location ~ ^/algorithm/version/download/sourcecode/(?<source>.*)$ {
+        alias /web_storage/media_root/algorithms/$source;
+  }
+
   location /web_storage {
     alias /web_storage;
   }
- 
+
+
   location / {
     proxy_read_timeout 36000;
-    client_max_body_size 50M;
+    client_max_body_size 500M;
     proxy_set_header Host $http_host;
     proxy_pass http://127.0.0.1:8080;
   }
