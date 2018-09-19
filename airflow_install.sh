@@ -13,6 +13,25 @@ read ipapi
 
 PASSWORD_AIRFLOW='cubocubo'
 
+USUARIO_CUBO="$(whoami)"
+PASSWORD_CUBO='ASDFADFASSDFA'
+ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
+
+
+while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
+   echo "Waiting while other process ends installs (dpkg/lock is locked)"
+   sleep 1
+done
+sudo apt install -y openssh-server libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg|| exit 1
+
+
+if ! hash "conda" > /dev/null; then
+	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
+	bash ~/instaladores/Anaconda2-4.1.1-Linux-x86_64.sh -b -p $HOME/anaconda2
+	export PATH="$HOME/anaconda2/bin:$PATH"
+	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
+fi
+
 
 conda install -y psycopg2 redis-py
 conda install -y -c conda-forge "airflow<1.9" 
