@@ -26,7 +26,7 @@ while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    echo "Waiting while other process ends installs (dpkg/lock is locked)"
    sleep 1
 done
-sudo apt install -y openssh-server git wget htop || exit 1
+sudo apt install -y openssh-server git wget || exit 1
 
 
 if ! hash "conda" > /dev/null; then
