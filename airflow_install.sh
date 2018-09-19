@@ -38,6 +38,7 @@ fi
 
 
 conda install -y psycopg2 redis-py
+conda install -c conda-forge celery=3.1.23
 conda install -y -c conda-forge "airflow<1.9" 
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
@@ -126,7 +127,7 @@ EnvironmentFile=/etc/systemd/system/airflow
 User=airflow
 Group=airflow
 Type=simple
-ExecStart=/home/cubo/airflow webserver --pid /run/airflow/webserver.pid
+ExecStart=/home/cubo/anaconda2/bin/airflow webserver --pid /run/airflow/webserver.pid
 Restart=on-failure
 RestartSec=5s
 PrivateTmp=true
@@ -150,7 +151,7 @@ EnvironmentFile=/etc/systemd/system/airflow
 User=airflow
 Group=airflow
 Type=simple
-ExecStart=/home/cubo/airflow scheduler
+ExecStart=/home/cubo/anaconda2/bin/airflow scheduler
 Restart=always
 RestartSec=5s
 
