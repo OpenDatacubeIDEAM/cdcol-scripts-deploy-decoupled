@@ -28,7 +28,7 @@ CREATE USER portal_web with password 'CDCol_web_2016';
 EOF
 
 sudo apt install redis-server
-sudo sed -i "s%bind .*%bind $_IP%" "/etc/redis/redis.conf"
+sudo sed -i "s%bind .*%bind $IP%" "/etc/redis/redis.conf"
 sudo service redis restart
 
 sudo -u postgres createdb airflow
