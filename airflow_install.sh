@@ -94,11 +94,17 @@ cat <<EOF >/etc/tmpfiles.d/airflow.conf
 D /run/airflow 0755 airflow airflow
 EOF
 
+sudo touch /etc/systemd/system/airflow
+sudo chmod o+w /etc/systemd/system/airflow
 cat <<EOF >/etc/systemd/system/airflow
 AIRFLOW_HOME='/home/cubo/airflow'
 AIRFLOW_CONFIG='/etc/tmpfiles.d/airflow.conf'
 EOF
+sudo chmod o-w /etc/systemd/system/airflow
 
+
+sudo touch /etc/systemd/system/airflow-webserver.service
+sudo chmod o+w /etc/systemd/system/airflow-webserver.service
 cat <<EOF >/etc/systemd/system/airflow-webserver.service
 [Unit]
 Description=Airflow webserver daemon
@@ -118,8 +124,11 @@ PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
 EOF
+sudo chmod o-w /etc/systemd/system/airflow-webserver.service
 
 
+sudo touch /etc/systemd/system/airflow-scheduler.service
+sudo chmod o+w /etc/systemd/system/airflow-scheduler.service
 cat <<EOF >/etc/systemd/system/airflow-scheduler.service
 [Unit]
 Description=Airflow scheduler daemon
@@ -138,7 +147,7 @@ RestartSec=5s
 [Install]
 WantedBy=multi-user.target
 EOF
-
+sudo chmod o-w /etc/systemd/system/airflow-scheduler.service
 sudo systemctl daemon-reload
 sudo systemctl start airflow-webserver
 sudo systemctl enable airflow-webserver
