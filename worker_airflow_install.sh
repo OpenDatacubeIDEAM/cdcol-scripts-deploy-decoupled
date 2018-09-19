@@ -119,15 +119,23 @@ ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 
 
 #AIRFLOW SERVICE
+sudo touch /etc/tmpfiles.d/airflow.conf
+sudo chmod o+w /etc/tmpfiles.d/airflow.conf
 cat <<EOF >/etc/tmpfiles.d/airflow.conf
 D /run/airflow 0755 airflow airflow
 EOF
+sudo chmod o-w /etc/tmpfiles.d/airflow.conf
 
+sudo touch /etc/systemd/system/airflow
+sudo chmod o+w /etc/systemd/system/airflow
 cat <<EOF >/etc/systemd/system/airflow
 AIRFLOW_HOME='/home/cubo/airflow'
 AIRFLOW_CONFIG='/etc/tmpfiles.d/airflow.conf'
 EOF
+sudo chmod o-w /etc/systemd/system/airflow
 
+sudo touch /etc/systemd/system/airflow-worker.service
+sudo chmod o+w /etc/systemd/system/airflow-worker.service
 cat <<EOF >/etc/systemd/system/airflow-worker.service
 [Unit]
 Description=Airflow celery worker daemon
@@ -146,7 +154,7 @@ RestartSec=10s
 [Install]
 WantedBy=multi-user.target
 EOF
-
+sudo chmod o-w /etc/systemd/system/airflow-worker.service
 sudo systemctl daemon-reload
 sudo systemctl start airflow-worker
 sudo systemctl enable airflow-worker
