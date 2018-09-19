@@ -123,7 +123,7 @@ cat <<EOF >/etc/tmpfiles.d/airflow.conf
 D /run/airflow 0755 airflow airflow
 EOF
 
-cat <<EOF >/etc//airflow
+cat <<EOF >/etc/systemd/system/airflow
 AIRFLOW_HOME='/home/cubo/airflow'
 AIRFLOW_CONFIG='/etc/tmpfiles.d/airflow.conf'
 EOF
@@ -135,7 +135,7 @@ After=network.target
 
 
 [Service]
-EnvironmentFile=/etc/sysconfig/airflow
+EnvironmentFile=/etc/systemd/system/airflow
 User=airflow
 Group=airflow
 Type=simple
