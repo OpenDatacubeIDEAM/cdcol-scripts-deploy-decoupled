@@ -8,6 +8,10 @@ read ipdb
 echo "¿Cuál es la ip del API REST?"
 read ipapi
 
+echo "¿Cuál es la ip del servidor NFS?"
+read ipnfs
+
+
 #AIRFLOW
 
 
@@ -70,6 +74,8 @@ sudo mkdir -p /web_storage/{dags,plugins}
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 
+sudo touch "$AIRFLOW_HOME/dags/dummy.py"
+sudo chmod o+w "$AIRFLOW_HOME/dags/dummy.py"
 cat <<EOF >"$AIRFLOW_HOME/dags/dummy.py"
 import airflow
 from airflow.models import DAG
@@ -85,14 +91,18 @@ dag = DAG(
     dagrun_timeout=timedelta(minutes=1))
 run_this_last = DummyOperator(task_id='DOES_NOTHING', dag=dag)
 EOF
+sudo chmod o-w "$AIRFLOW_HOME/dags/dummy.py"
 
 airflow initdb
 
 #AIRFLOW SERVICE
 
+sudo touch /etc/tmpfiles.d/airflow.conf
+sudo chmod o+w /etc/tmpfiles.d/airflow.conf
 cat <<EOF >/etc/tmpfiles.d/airflow.conf
 D /run/airflow 0755 airflow airflow
 EOF
+sudo chmod o-w /etc/tmpfiles.d/airflow.conf
 
 sudo touch /etc/systemd/system/airflow
 sudo chmod o+w /etc/systemd/system/airflow
