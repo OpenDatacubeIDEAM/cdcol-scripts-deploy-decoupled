@@ -75,8 +75,6 @@ sudo mkdir -p /web_storage/{dags,plugins}
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 
-sudo touch "$AIRFLOW_HOME/dags/dummy.py"
-sudo chmod o+w "$AIRFLOW_HOME/dags/dummy.py"
 cat <<EOF >>"$AIRFLOW_HOME/dags/dummy.py"
 import airflow
 from airflow.models import DAG
@@ -92,7 +90,6 @@ dag = DAG(
     dagrun_timeout=timedelta(minutes=1))
 run_this_last = DummyOperator(task_id='DOES_NOTHING', dag=dag)
 EOF
-sudo chmod o-w "$AIRFLOW_HOME/dags/dummy.py"
 
 airflow initdb
 
