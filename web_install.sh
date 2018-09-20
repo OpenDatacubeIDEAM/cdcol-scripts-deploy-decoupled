@@ -122,12 +122,10 @@ EOF
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
 sudo systemctl daemon-reload
-sudo systemctl status gunicorn
 sudo systemctl stop gunicorn
 sudo systemctl daemon-reload
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
-sudo systemctl status gunicorn
 
 #Configuracion de Nginx
 sudo touch /etc/nginx/sites-available/ideam
