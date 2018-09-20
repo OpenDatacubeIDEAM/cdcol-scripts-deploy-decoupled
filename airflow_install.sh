@@ -73,7 +73,8 @@ sudo mount /source_storage
 sudo mount /web_storage
 
 sudo chmod o+w /web_storage
-sudo mkdir  /web_storage/{dags,plugins}
+ssh cubo@192.168.1.232 "sudo mkdir  /web_storage/{dags,plugins}"
+
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 sudo touch /home/cubo/dags/dummy.py
