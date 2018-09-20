@@ -77,7 +77,7 @@ ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 
 sudo touch "$AIRFLOW_HOME/dags/dummy.py"
 sudo chmod o+w "$AIRFLOW_HOME/dags/dummy.py"
-cat <<EOF >"$AIRFLOW_HOME/dags/dummy.py"
+cat <<EOF >>"$AIRFLOW_HOME/dags/dummy.py"
 import airflow
 from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
@@ -98,21 +98,12 @@ airflow initdb
 
 #AIRFLOW SERVICE
 
-sudo touch /etc/tmpfiles.d/airflow.conf
-sudo chmod o+w /etc/tmpfiles.d/airflow.conf
-cat <<EOF >/etc/tmpfiles.d/airflow.conf
-D /run/airflow 0755 airflow airflow
-EOF
-sudo chmod o-w /etc/tmpfiles.d/airflow.conf
 
-sudo touch /etc/systemd/system/airflow
-sudo chmod o+w /etc/systemd/system/airflow
-cat <<EOF >/etc/systemd/system/airflow
+cd $HOME
+mkdir env
+cat <<EOF >>/home/cubo/env/airflow
 AIRFLOW_HOME='/home/cubo/airflow'
-AIRFLOW_CONFIG='/etc/tmpfiles.d/airflow.conf'
 EOF
-sudo chmod o-w /etc/systemd/system/airflow
-
 
 sudo touch /etc/systemd/system/airflow-webserver.service
 sudo chmod o+w /etc/systemd/system/airflow-webserver.service
@@ -123,9 +114,9 @@ After=network.target
 
 
 [Service]
-EnvironmentFile=/etc/systemd/system/airflow
-User=airflow
-Group=airflow
+EnvironmentFile=/home/cubo/env/airflow
+User=cubo
+Group=cubo
 Type=simple
 ExecStart=/home/cubo/anaconda2/bin/airflow webserver --pid /run/airflow/webserver.pid
 Restart=on-failure
@@ -147,11 +138,11 @@ After=network.target
 
 
 [Service]
-EnvironmentFile=/etc/systemd/system/airflow
-User=airflow
-Group=airflow
+EnvironmentFile=/home/cubo/env/airflow
+User=cubo
+Group=cubo
 Type=simple
-ExecStart=/home/cubo/anaconda2/bin/airflow scheduler
+ExecStart=/home/cubo/anaconda2/bin/airflow scheduler --pid /run/airflow/scheduler.pid
 Restart=always
 RestartSec=5s
 
