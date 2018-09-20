@@ -119,20 +119,11 @@ ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 
 
 #AIRFLOW SERVICE
-sudo touch /etc/tmpfiles.d/airflow.conf
-sudo chmod o+w /etc/tmpfiles.d/airflow.conf
-cat <<EOF >/etc/tmpfiles.d/airflow.conf
-D /run/airflow 0755 airflow airflow
-EOF
-sudo chmod o-w /etc/tmpfiles.d/airflow.conf
-
-sudo touch /etc/systemd/system/airflow
-sudo chmod o+w /etc/systemd/system/airflow
-cat <<EOF >/etc/systemd/system/airflow
+cd $HOME
+mkdir env
+cat <<EOF >>/home/cubo/env/airflow
 AIRFLOW_HOME='/home/cubo/airflow'
-AIRFLOW_CONFIG='/etc/tmpfiles.d/airflow.conf'
 EOF
-sudo chmod o-w /etc/systemd/system/airflow
 
 sudo touch /etc/systemd/system/airflow-worker.service
 sudo chmod o+w /etc/systemd/system/airflow-worker.service
@@ -143,13 +134,12 @@ After=network.target
 
 
 [Service]
-EnvironmentFile=/etc/systemd/system/airflow
-User=airflow
-Group=airflow
+EnvironmentFile=/home/cubo/env/airflow
+User=cubo
+Group=cubo
 Type=simple
-ExecStart=/home/cubo/airflow worker -c 4
-Restart=on-failure
-RestartSec=10s
+ExecStart=/home/cubo/airflow worker --pid /run/airflow/worker.pid --concurrency 4 
+
 
 [Install]
 WantedBy=multi-user.target
