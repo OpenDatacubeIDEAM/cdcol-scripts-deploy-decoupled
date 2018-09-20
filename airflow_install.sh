@@ -72,12 +72,13 @@ sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
 
+sudo chmod o+w /web_storage
 sudo mkdir  /web_storage/{dags,plugins}
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 sudo touch /home/cubo/dags/dummy.py
 sudo chmod o+w /home/cubo/dags/dummy.py
-cat <<EOF >>"$AIRFLOW_HOME/dags/dummy.py"
+cat <<EOF >>/home/cubo/dags/dummy.py
 import airflow
 from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
@@ -93,6 +94,7 @@ dag = DAG(
 run_this_last = DummyOperator(task_id='DOES_NOTHING', dag=dag)
 EOF
 sudo chmod o-w /home/cubo/dags/dummy.py
+sudo chmod o-w /web_storage
 airflow initdb
 
 
