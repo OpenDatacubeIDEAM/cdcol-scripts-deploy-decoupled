@@ -35,8 +35,6 @@ fi
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
 
-#pip install rasterio==1.0a9 --force-reinstall
-
 git clone $REPO
 cd agdc-v2
 git checkout $BRANCH
@@ -115,6 +113,3 @@ sudo chown cubo:root /dc_storage /web_storage /source_storage
 sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
-
-pip install --upgrade pip
-pip install lcmap-pyccd
