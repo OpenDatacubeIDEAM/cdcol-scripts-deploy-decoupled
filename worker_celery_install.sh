@@ -23,7 +23,7 @@ while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    echo "Waiting while other process ends installs (dpkg/lock is locked)"
    sleep 1
 done
-sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick|| exit 1
+sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg|| exit 1
 
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
