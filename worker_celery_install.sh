@@ -34,8 +34,7 @@ fi
 
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
-pip install --upgrade pip
-pip install lcmap-pyccd
+
 #pip install rasterio==1.0a9 --force-reinstall
 
 git clone $REPO
@@ -105,7 +104,7 @@ cd $HOME
 sudo apt install nfs-common
 sudo chmod o+w /etc/fstab
 cat <<EOF >>/etc/fstab
-#$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
+$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
 $ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
 $ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
 EOF
@@ -114,5 +113,8 @@ sudo chmod o-w /etc/fstab
 sudo mkdir /dc_storage /web_storage /source_storage
 sudo chown cubo:root /dc_storage /web_storage /source_storage
 sudo mount /dc_storage
-#sudo mount /source_storage
+sudo mount /source_storage
 sudo mount /web_storage
+
+pip install --upgrade pip
+pip install lcmap-pyccd
