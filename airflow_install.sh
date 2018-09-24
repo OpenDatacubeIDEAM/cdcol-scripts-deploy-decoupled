@@ -11,6 +11,7 @@ read ipapi
 echo "¿Cuál es la ip del servidor NFS?"
 read ipnfs
 
+IP=`hostname -I | awk '{ print $1 }'`
 
 #AIRFLOW
 
@@ -51,7 +52,8 @@ sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
 
 sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@ipapi/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%celery_result_backend =.*%celery_result_backend = redis://$ipdb:6379/0%" "$AIRFLOW_HOME/airflow.cfg"
-
+sed -i "s%endpoint_url = .*%endpoint_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%base_url = .*%base_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
 
 #MOUNT NFS SERVER
 cd $HOME
