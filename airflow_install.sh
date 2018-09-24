@@ -67,13 +67,12 @@ sudo chmod o-w /etc/fstab
 
 sudo mkdir /dc_storage /web_storage /source_storage
 
-sudo chown cubo:root /dc_storage /web_storage /source_storage
+
 sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
 
-sudo chmod o+w /web_storage
-ssh cubo@192.168.1.232 "sudo mkdir  /web_storage/{dags,plugins}"
+sudo mkdir  /web_storage/{dags,plugins}
 
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
@@ -95,7 +94,8 @@ dag = DAG(
 run_this_last = DummyOperator(task_id='DOES_NOTHING', dag=dag)
 EOF
 sudo chmod o-w /home/cubo/dags/dummy.py
-sudo chmod o-w /web_storage
+sudo chown cubo:root /dc_storage /web_storage /source_storage
+
 airflow initdb
 
 
