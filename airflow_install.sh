@@ -105,6 +105,7 @@ airflow initdb
 
 
 cd $HOME
+source .bashrc
 mkdir env
 cat <<EOF >>/home/cubo/env/airflow
 PATH="/home/cubo/anaconda2/bin:$PATH"
