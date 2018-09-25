@@ -116,7 +116,7 @@ ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 
 
 #AIRFLOW SERVICE
-sudo mkdir /tmp/airflow
+mkdir /tmp/airflow
 cd $HOME
 source .bashrc
 mkdir env
