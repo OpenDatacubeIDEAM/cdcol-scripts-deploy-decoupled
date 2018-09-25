@@ -116,7 +116,7 @@ ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 
 
 #AIRFLOW SERVICE
-sudo mkdir /run/airflow
+sudo mkdir /tmp/airflow
 cd $HOME
 source .bashrc
 mkdir env
@@ -138,7 +138,7 @@ EnvironmentFile=/home/cubo/env/airflow
 User=cubo
 Group=cubo
 Type=simple
-ExecStart=/home/cubo/airflow worker --pid /run/airflow/worker.pid --concurrency 4 
+ExecStart=/home/cubo/airflow worker --pid /tmp/airflow/worker.pid --concurrency 4 
 
 
 [Install]
