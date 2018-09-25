@@ -119,9 +119,12 @@ ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
 
 
 #AIRFLOW SERVICE
+sudo mkdir /run/airflow
 cd $HOME
+source .bashrc
 mkdir env
 cat <<EOF >>/home/cubo/env/airflow
+PATH="/home/cubo/anaconda2/bin:$PATH"
 AIRFLOW_HOME='/home/cubo/airflow'
 EOF
 
