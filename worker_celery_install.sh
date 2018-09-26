@@ -15,7 +15,7 @@ ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
 BRANCH="desacoplado"
 
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git --branch desacoplado
 mv CDCol/* ~/
 
 #Prerequisites installation: 
