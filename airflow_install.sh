@@ -37,6 +37,34 @@ if ! hash "conda" > /dev/null; then
 	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
 fi
 
+conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+
+
+git clone $REPO
+cd agdc-v2
+git checkout $BRANCH
+python setup.py install
+
+
+
+cat <<EOF >~/.datacube.conf
+[datacube]
+db_database: datacube
+
+# A blank host will use a local socket. Specify a hostname to use TCP.
+db_hostname: $ipdb
+
+# Credentials are optional: you might have other Postgres authentication configured.
+# The default username otherwise is the current user id.
+db_username: $USUARIO_CUBO
+db_password: $PASSWORD_CUBO
+EOF
+
+datacube -v system init
+source $HOME/.bashrc
+
+cd $HOME
+
 
 conda install -y psycopg2 redis-py
 conda install -c conda-forge celery=3.1.23
