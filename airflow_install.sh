@@ -11,7 +11,9 @@ read ipapi
 echo "¿Cuál es la ip del servidor NFS?"
 read ipnfs
 
-IP=`hostname -I | awk '{ print $1 }'`
+echo "¿Cuál es la ip pública de este servidor?"
+read IP
+
 
 #AIRFLOW
 
@@ -67,7 +69,7 @@ cd $HOME
 
 
 conda install -y psycopg2 redis-py
-conda install -c conda-forge celery=3.1.23
+conda install -c conda-forge flower celery=3.1.23
 conda install -y -c conda-forge "airflow<1.9" 
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
@@ -78,7 +80,7 @@ airflow initdb
 sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@$ipdb:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
 
-sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@ipapi/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@$ipapi/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%celery_result_backend =.*%celery_result_backend = redis://$ipdb:6379/0%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%endpoint_url = .*%endpoint_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%base_url = .*%base_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
@@ -184,10 +186,36 @@ RestartSec=5s
 WantedBy=multi-user.target
 EOF
 sudo chmod o-w /etc/systemd/system/airflow-scheduler.service
+
+sudo touch /etc/systemd/system/flower.service
+sudo chmod o+w /etc/systemd/system/flower.service
+cat <<EOF >/etc/systemd/system/flower.service
+[Unit]
+Description=Airflow flower daemon
+After=network.target
+
+
+[Service]
+EnvironmentFile=/home/cubo/env/airflow
+User=cubo
+Group=cubo
+Type=simple
+ExecStart=/home/cubo/anaconda2/bin/python /home/cubo/anaconda2/bin/airflow flower
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo chmod o-w /etc/systemd/system/flower.service
+
+
 sudo systemctl daemon-reload
 sudo systemctl start airflow-webserver
 sudo systemctl enable airflow-webserver
 
-sudo systemctl daemon-reload
 sudo systemctl start airflow-scheduler
 sudo systemctl enable airflow-scheduler
+
+sudo systemctl start flower
+sudo systemctl enable flower
