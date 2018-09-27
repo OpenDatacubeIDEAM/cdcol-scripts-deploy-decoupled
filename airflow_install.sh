@@ -23,6 +23,8 @@ PASSWORD_AIRFLOW='cubocubo'
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
+REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
+BRANCH="desacoplado"
 
 
 while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
