@@ -182,7 +182,7 @@ EnvironmentFile=/home/cubo/env/airflow
 User=cubo
 Group=cubo
 Type=simple
-ExecStart=/home/cubo/anaconda2/bin/airflow scheduler 
+ExecStart=/home/cubo/anaconda2/bin/python /home/cubo/anaconda2/bin/airflow scheduler 
 Restart=always
 RestartSec=5s
 
