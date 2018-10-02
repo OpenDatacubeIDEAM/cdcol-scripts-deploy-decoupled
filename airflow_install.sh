@@ -222,3 +222,6 @@ sudo systemctl enable airflow-scheduler
 
 sudo systemctl start flower
 sudo systemctl enable flower
+
+cd $HOME
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflows.git
