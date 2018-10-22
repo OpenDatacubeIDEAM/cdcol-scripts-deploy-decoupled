@@ -116,6 +116,8 @@ sed -i "s%celery_result_backend =.*%celery_result_backend = redis://$ipdb:6379/0
 sed -i "s%endpoint_url = .*%endpoint_url = http://$ipairflow:8080%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%base_url = .*%base_url = http://$ipairflow:8080%" "$AIRFLOW_HOME/airflow.cfg"
 
+sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
+
 
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
