@@ -144,7 +144,7 @@ EnvironmentFile=/home/cubo/env/airflow
 User=cubo
 Group=cubo
 Type=simple
-ExecStart=/home/cubo/anaconda2/bin/python /home/cubo/anaconda2/bin/airflow worker --concurrency 4 
+ExecStart=/home/cubo/anaconda2/bin/python /home/cubo/anaconda2/bin/airflow worker --concurrency 1 --queues airflow_small 
 
 
 [Install]
