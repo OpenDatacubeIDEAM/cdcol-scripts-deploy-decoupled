@@ -7,14 +7,14 @@ if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
 read ipdb
 
-echo "¿Cuál es la ip del API REST?"
-read ipapi
+#echo "¿Cuál es la ip del API REST?"
+#read ipapi
 
-echo "¿Cuál es la ip del servidor NFS?"
-read ipnfs
+#echo "¿Cuál es la ip del servidor NFS?"
+#read ipnfs
 
-echo "¿Cuál es la ip pública de este servidor?"
-read IP
+#echo "¿Cuál es la ip pública de este servidor?"
+#read IP
 
 #VARIABLES
 PASSWORD_AIRFLOW='cubocubo'
