@@ -47,6 +47,8 @@ cd datacube-core
 conda install --file requirements-test.txt
 python setup.py install
 
+conda install psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas
+
 cat <<EOF >~/.datacube.conf
 [datacube]
 db_database: datacube
