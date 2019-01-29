@@ -22,7 +22,7 @@ USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
-BRANCH="desacoplado"
+BRANCH="develop"
 
 
 
@@ -42,10 +42,9 @@ if ! hash "conda" > /dev/null; then
 fi
 
 conda config --add channels conda-forge
-conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
-
-git clone $OPEN_DATA_CUBE_REPOSITORY
+git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
 cd datacube-core
+conda install --file requirements-test.txt
 python setup.py install
 
 cat <<EOF >~/.datacube.conf
