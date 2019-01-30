@@ -31,8 +31,6 @@ while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    sleep 1
 done
 
-sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg libpoppler-dev || exit 1
-
 #CONDA INSTALL
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
@@ -42,12 +40,12 @@ if ! hash "conda" > /dev/null; then
 fi
 
 conda config --add channels conda-forge
-conda install -c conda-forge libiconv poppler gdal libgdal jupyter matplotlib scipy  hdf5 libnetcdf shapely ipywidgets scipy
+sudo apt-get install libhdf5-serial-dev libnetcdf-dev libgdal1-dev postgresql-doc-9.5 libhdf5-doc netcdf-doc libgdal1-doc hdf5-tools netcdf-bin gdal-bin pgadmin3 || exit 1
 
 git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
 cd datacube-core
-conda install --force --file requirements-test.txt
 python setup.py install
+conda install psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas
 
 
 cat <<EOF >~/.datacube.conf
@@ -67,4 +65,37 @@ datacube -v system init
 source $HOME/.bashrc
 
 cd $HOME
+
+
+
+#sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg libpoppler-dev || exit 1
+#
+#
+#
+#conda config --add channels conda-forge
+#conda install -c conda-forge libiconv poppler gdal libgdal jupyter matplotlib scipy  hdf5 libnetcdf shapely ipywidgets scipy
+#
+#git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
+#cd datacube-core
+#conda install --force --file requirements-test.txt
+#python setup.py install
+#
+#
+#cat <<EOF >~/.datacube.conf
+#[datacube]
+#db_database: datacube
+#
+## A blank host will use a local socket. Specify a hostname to use TCP.
+#db_hostname: $ipdb
+#
+## Credentials are optional: you might have other Postgres authentication configured.
+## The default username otherwise is the current user id.
+#db_username: $USUARIO_CUBO
+#db_password: $PASSWORD_CUBO
+#EOF
+#
+#datacube -v system init
+#source $HOME/.bashrc
+#
+#cd $HOME
 
