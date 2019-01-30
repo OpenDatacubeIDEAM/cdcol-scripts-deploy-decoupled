@@ -31,10 +31,11 @@ while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    sleep 1
 done
 
-sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libdgal-dev libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg libpoppler-dev || exit 1
+sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal-dev libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg libpoppler-dev || exit 1
 export CPLUS_INCLUDE_PATH=/usr/include/gdal
 export C_INCLUDE_PATH=/usr/include/gdal
-
+echo 'export CPLUS_INCLUDE_PATH="/usr/include/gdal"'>>$HOME/.bashrc
+echo 'export C_INCLUDE_PATH="/usr/include/gdal"'>>$HOME/.bashrc
 
 #CONDA INSTALL
 if ! hash "conda" > /dev/null; then
@@ -45,15 +46,13 @@ if ! hash "conda" > /dev/null; then
 fi
 
 conda config --add channels conda-forge
-#conda install -c conda-forge --no-deps jupyter matplotlib scipy  hdf5 libnetcdf shapely ipywidgets scipy
-#conda install -c conda-forge libiconv poppler gdal libgdal
+conda install -c conda-forge libgdal gdal
 
 git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
 cd datacube-core
 cat <<EOF >> requirements-test.txt
 libgdal
 gdal>=1.9
-poppler
 jupyter
 matplotlib
 scipy
