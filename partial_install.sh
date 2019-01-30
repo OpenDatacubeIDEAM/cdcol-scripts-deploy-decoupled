@@ -46,13 +46,11 @@ if ! hash "conda" > /dev/null; then
 fi
 
 conda config --add channels conda-forge
-conda install -c conda-forge libgdal gdal
+conda install -c conda-forge libgdal gdal libiconv
 
 git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
 cd datacube-core
 cat <<EOF >> requirements-test.txt
-libgdal
-gdal>=1.9
 jupyter
 matplotlib
 scipy
@@ -62,7 +60,7 @@ shapely
 ipywidgets
 scipy
 EOF
-conda install --force --file requirements-test.txt
+conda install --force-reinstall --file requirements-test.txt
 python setup.py install
 
 
