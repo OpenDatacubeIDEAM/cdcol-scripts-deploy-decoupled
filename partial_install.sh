@@ -42,16 +42,12 @@ if ! hash "conda" > /dev/null; then
 fi
 
 conda config --add channels conda-forge
-conda install -c conda-forge --no-deps jupyter matplotlib scipy psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy
-conda install -c conda-forge libiconv poppler
+conda install -c conda-forge libiconv poppler gdal libgdal jupyter matplotlib scipy  hdf5 libnetcdf shapely ipywidgets scipy
 
 git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
 cd datacube-core
 conda install --force --file requirements-test.txt
 python setup.py install
-
-
-
 
 
 cat <<EOF >~/.datacube.conf
