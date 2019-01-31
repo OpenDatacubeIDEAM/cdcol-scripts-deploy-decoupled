@@ -46,7 +46,7 @@ if ! hash "conda" > /dev/null; then
 fi
 
 conda config --add channels conda-forge
-conda install -c conda-forge libgdal gdal libiconv
+conda install -y -c conda-forge libgdal gdal libiconv
 
 git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
 cd datacube-core
@@ -60,7 +60,7 @@ shapely
 ipywidgets
 scipy
 EOF
-conda install -c conda-forge --force-reinstall --file requirements-test.txt
+conda install -y -c conda-forge --force-reinstall --file requirements-test.txt
 python setup.py install
 
 
@@ -83,8 +83,7 @@ source $HOME/.bashrc
 cd $HOME
 
 
-conda install -y redis-py
-conda install -c conda-forge flower celery=4.2
+conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 conda install -y -c conda-forge "airflow==1.10.1"
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
