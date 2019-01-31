@@ -85,3 +85,12 @@ source $HOME/.bashrc
 
 cd $HOME
 
+
+conda install -y  redis-py
+conda install -c conda-forge flower celery=4.2
+conda install -y -c conda-forge "airflow=>1.10"
+if [[ -z "${AIRFLOW_HOME}" ]]; then
+    export AIRFLOW_HOME="$HOME/airflow"
+    echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
+fi
+
