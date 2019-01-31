@@ -10,8 +10,8 @@ read ipdb
 #echo "¿Cuál es la ip del API REST?"
 #read ipapi
 
-#echo "¿Cuál es la ip del servidor NFS?"
-#read ipnfs
+echo "¿Cuál es la ip del servidor NFS?"
+read ipnfs
 
 #echo "¿Cuál es la ip pública de este servidor?"
 #read IP
@@ -60,11 +60,8 @@ shapely
 ipywidgets
 scipy
 EOF
-conda install --force-reinstall --file requirements-test.txt
+conda install -c conda-forge --force-reinstall --file requirements-test.txt
 python setup.py install
-
-
-
 
 
 cat <<EOF >~/.datacube.conf
@@ -86,11 +83,30 @@ source $HOME/.bashrc
 cd $HOME
 
 
-conda install -y  redis-py
+conda install -y redis-py
 conda install -c conda-forge flower celery=4.2
-conda install -y -c conda-forge "airflow=>1.10"
+conda install -y -c conda-forge "airflow==1.10.1"
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
     echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
 fi
+
+#MOUNT NFS SERVER
+cd $HOME
+
+sudo apt install nfs-common
+sudo chmod o+w /etc/fstab
+cat <<EOF >>/etc/fstab
+$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
+$ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
+$ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
+EOF
+sudo chmod o-w /etc/fstab
+
+sudo mkdir /dc_storage /web_storage /source_storage
+
+sudo chown cubo:root /dc_storage /web_storage /source_storage
+sudo mount /dc_storage
+sudo mount /source_storage
+sudo mount /web_storage
 
