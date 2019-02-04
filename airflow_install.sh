@@ -105,7 +105,7 @@ sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
 #MOUNT NFS SERVER
 cd $HOME
 
-sudo apt install nfs-common
+sudo apt install -y nfs-common
 sudo chmod o+w /etc/fstab
 cat <<EOF >>/etc/fstab
 $ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
