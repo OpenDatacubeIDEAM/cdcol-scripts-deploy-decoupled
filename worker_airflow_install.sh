@@ -15,37 +15,52 @@ read ipairflow
 sudo apt-get update
 
 
+#VARIABLES
+PASSWORD_AIRFLOW='cubocubo'
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
-ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
-REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
-BRANCH="desacoplado"
+ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
+OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
+BRANCH="develop"
 
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
-mv CDCol/* ~/
 
-#Prerequisites installation: 
+
 while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    echo "Waiting while other process ends installs (dpkg/lock is locked)"
    sleep 1
 done
-sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg|| exit 1
 
+sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal-dev libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg libpoppler-dev || exit 1
+export CPLUS_INCLUDE_PATH=/usr/include/gdal
+export C_INCLUDE_PATH=/usr/include/gdal
+echo 'export CPLUS_INCLUDE_PATH="/usr/include/gdal"'>>$HOME/.bashrc
+echo 'export C_INCLUDE_PATH="/usr/include/gdal"'>>$HOME/.bashrc
+
+#CONDA INSTALL
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
-	bash ~/instaladores/Anaconda2-4.1.1-Linux-x86_64.sh -b -p $HOME/anaconda2
+	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda2
 	export PATH="$HOME/anaconda2/bin:$PATH"
 	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
 fi
 
-conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+conda config --add channels conda-forge
+conda install -y -c conda-forge libgdal gdal libiconv
 
-
-git clone $REPO
-cd agdc-v2
-git checkout $BRANCH
+git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
+cd datacube-core
+cat <<EOF >> requirements-test.txt
+jupyter
+matplotlib
+scipy
+hdf5
+libnetcdf
+shapely
+ipywidgets
+scipy
+EOF
+conda install -y -c conda-forge --force-reinstall --file requirements-test.txt
 python setup.py install
-
 
 
 cat <<EOF >~/.datacube.conf
@@ -63,20 +78,25 @@ EOF
 
 datacube -v system init
 source $HOME/.bashrc
-sudo groupadd ingesters
-sudo mkdir /dc_storage
-sudo mkdir /source_storage
-sudo chown $USUARIO_CUBO:ingesters /dc_storage
-sudo chmod -R g+rwxs /dc_storage
-sudo chown $USUARIO_CUBO:ingesters /source_storage
-sudo chmod -R g+rwxs /source_storage
-sudo mkdir /web_storage
-sudo chown $USUARIO_CUBO /web_storage
-#Crear un usuario ingestor
-pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes")
-sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002
 
-conda install -c conda-forge celery=3.1.23
+conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
+conda install -y -c conda-forge "airflow==1.10.1"
+if [[ -z "${AIRFLOW_HOME}" ]]; then
+    export AIRFLOW_HOME="$HOME/airflow"
+    echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
+fi
+
+airflow initdb
+sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@$ipdb:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
+
+sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@$ipapi/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%celery_result_backend =.*%celery_result_backend = redis://$ipdb:6379/0%" "$AIRFLOW_HOME/airflow.cfg"
+
+sed -i "s%endpoint_url = .*%endpoint_url = http://$ipairflow:8080%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%base_url = .*%base_url = http://$ipairflow:8080%" "$AIRFLOW_HOME/airflow.cfg"
+
+sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
 
 
 #MOUNT NFS SERVER
@@ -92,31 +112,11 @@ EOF
 sudo chmod o-w /etc/fstab
 
 sudo mkdir /dc_storage /web_storage /source_storage
+
 sudo chown cubo:root /dc_storage /web_storage /source_storage
 sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
-
-
-#AIRFLOW
-PASSWORD_AIRFLOW='cubocubo'
-conda install -y psycopg2 redis-py
-conda install -y -c conda-forge "airflow<1.9"
-if [[ -z "${AIRFLOW_HOME}" ]]; then
-    export AIRFLOW_HOME="$HOME/airflow"
-    echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
-fi
-airflow initdb
-sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@$ipdb:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
-sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
-
-sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@$ipapi/airflow%" "$AIRFLOW_HOME/airflow.cfg"
-sed -i "s%celery_result_backend =.*%celery_result_backend = redis://$ipdb:6379/0%" "$AIRFLOW_HOME/airflow.cfg"
-
-sed -i "s%endpoint_url = .*%endpoint_url = http://$ipairflow:8080%" "$AIRFLOW_HOME/airflow.cfg"
-sed -i "s%base_url = .*%base_url = http://$ipairflow:8080%" "$AIRFLOW_HOME/airflow.cfg"
-
-sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
 
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
