@@ -160,7 +160,7 @@ EnvironmentFile=/home/cubo/env/airflow
 User=cubo
 Group=cubo
 Type=simple
-ExecStart= /home/cubo/anaconda2/bin/python /home/cubo/anaconda2/bin/airflow webserver
+ExecStart= /home/cubo/anaconda/bin/python3 /home/cubo/anaconda/bin/airflow webserver
 Restart=on-failure
 RestartSec=5s
 PrivateTmp=true
@@ -184,7 +184,7 @@ EnvironmentFile=/home/cubo/env/airflow
 User=cubo
 Group=cubo
 Type=simple
-ExecStart=/home/cubo/anaconda2/bin/python /home/cubo/anaconda2/bin/airflow scheduler
+ExecStart=/home/cubo/anaconda/bin/python3 /home/cubo/anaconda/bin/airflow scheduler
 Restart=always
 RestartSec=5s
 
@@ -206,7 +206,7 @@ EnvironmentFile=/home/cubo/env/airflow
 User=cubo
 Group=cubo
 Type=simple
-ExecStart=/home/cubo/anaconda2/bin/python /home/cubo/anaconda2/bin/airflow flower
+ExecStart=/home/cubo/anaconda/bin/python3 /home/cubo/anaconda/bin/airflow flower
 Restart=on-failure
 RestartSec=5s
 
