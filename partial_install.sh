@@ -36,8 +36,8 @@ sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgres
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
 	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda
-	export PATH="$HOME/anaconda/envs/python3/bin:$PATH"
-	echo 'export PATH="$HOME/anaconda/envs/python3/bin:$PATH"'>>$HOME/.bashrc
+	export PATH="$HOME/anaconda/bin:$PATH"
+	echo 'export PATH="$HOME/anaconda/bin:$PATH"'>>$HOME/.bashrc
 fi
 
 source $HOME/.bashrc
