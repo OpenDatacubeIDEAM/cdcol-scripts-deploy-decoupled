@@ -42,7 +42,7 @@ if ! hash "conda" > /dev/null; then
 fi
 
 source $HOME/.bashrc
-conda install -y python=3.7.2
+conda install -y python=3.6.8
 conda install -y jupyter matplotlib scipy
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
@@ -143,7 +143,7 @@ cd $HOME
 source .bashrc
 mkdir env
 cat <<EOF >>/home/cubo/env/airflow
-PATH="/home/cubo/anaconda2/bin:$PATH"
+PATH="$HOME/anaconda/bin:$PATH"
 AIRFLOW_HOME='/home/cubo/airflow'
 EOF
 
