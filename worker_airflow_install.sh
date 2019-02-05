@@ -14,7 +14,6 @@ read ipairflow
 
 sudo apt-get update
 
-
 #VARIABLES
 PASSWORD_AIRFLOW='cubocubo'
 USUARIO_CUBO="$(whoami)"
@@ -24,43 +23,27 @@ OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
 BRANCH="develop"
 
 
-
 while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    echo "Waiting while other process ends installs (dpkg/lock is locked)"
    sleep 1
 done
 
-sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal-dev libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg libpoppler-dev || exit 1
-export CPLUS_INCLUDE_PATH=/usr/include/gdal
-export C_INCLUDE_PATH=/usr/include/gdal
-echo 'export CPLUS_INCLUDE_PATH="/usr/include/gdal"'>>$HOME/.bashrc
-echo 'export C_INCLUDE_PATH="/usr/include/gdal"'>>$HOME/.bashrc
+sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg|| exit 1
+
 
 #CONDA INSTALL
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
-	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda2
-	export PATH="$HOME/anaconda2/bin:$PATH"
-	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
+	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda
+	export PATH="$HOME/anaconda/bin:$PATH"
+	echo 'export PATH="$HOME/anaconda/bin:$PATH"'>>$HOME/.bashrc
 fi
 
-conda config --add channels conda-forge
-conda install -y -c conda-forge libgdal gdal libiconv
+source $HOME/.bashrc
+conda install -y python=3.6.8
+conda install -y jupyter matplotlib scipy
+conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
-git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
-cd datacube-core
-cat <<EOF >> requirements-test.txt
-jupyter
-matplotlib
-scipy
-hdf5
-libnetcdf
-shapely
-ipywidgets
-scipy
-EOF
-conda install -y -c conda-forge --force-reinstall --file requirements-test.txt
-python setup.py install
 
 
 cat <<EOF >~/.datacube.conf
@@ -76,8 +59,15 @@ db_username: $USUARIO_CUBO
 db_password: $PASSWORD_CUBO
 EOF
 
+git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
+cd datacube-core
+python setup.py install
+
 datacube -v system init
+datacube system check
+
 source $HOME/.bashrc
+cd $HOME
 
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 conda install -y -c conda-forge "airflow==1.10.1"
@@ -127,7 +117,7 @@ cd $HOME
 source .bashrc
 mkdir env
 cat <<EOF >>/home/cubo/env/airflow
-PATH="/home/cubo/anaconda2/bin:$PATH"
+PATH="$HOME/anaconda/bin:$PATH"
 AIRFLOW_HOME='/home/cubo/airflow'
 EOF
 
