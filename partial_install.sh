@@ -29,20 +29,23 @@ while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    sleep 1
 done
 
+sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg|| exit 1
+
+
 #CONDA INSTALL
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
-	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda2
-	export PATH="$HOME/anaconda2/bin:$PATH"
-	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
+	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda
+	export PATH="$HOME/anaconda/envs/python3/bin:$PATH"
+	echo 'export PATH="$HOME/anaconda/envs/python3/bin:$PATH"'>>$HOME/.bashrc
 fi
 
 source $HOME/.bashrc
-
+conda install -y python=3.7.2
 conda install -y jupyter matplotlib scipy
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
-sudo apt install postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5
+
 
 cat <<EOF >~/.datacube.conf
 [datacube]
