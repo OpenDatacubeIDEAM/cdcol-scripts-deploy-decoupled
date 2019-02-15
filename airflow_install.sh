@@ -38,7 +38,9 @@ if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
 	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda
 	export PATH="$HOME/anaconda/bin:$PATH"
+	export SLUGIFY_USES_TEXT_UNIDECODE=yes
 	echo 'export PATH="$HOME/anaconda/bin:$PATH"'>>$HOME/.bashrc
+	echo 'export SLUGIFY_USES_TEXT_UNIDECODE=yes'>>$HOME/.bashrc
 fi
 
 source $HOME/.bashrc
@@ -76,6 +78,7 @@ cd $HOME
 
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 conda install -y -c conda-forge "airflow==1.10.1"
+pip install apache-airflow --upgrade
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
     echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
@@ -147,6 +150,7 @@ mkdir env
 cat <<EOF >>/home/cubo/env/airflow
 PATH="$HOME/anaconda/bin:$PATH"
 AIRFLOW_HOME='/home/cubo/airflow'
+SLUGIFY_USES_TEXT_UNIDECODE=yes
 EOF
 
 sudo touch /etc/systemd/system/airflow-webserver.service
