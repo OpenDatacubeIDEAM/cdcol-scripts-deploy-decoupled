@@ -12,41 +12,39 @@ read ipnfs
 
 sudo apt-get update
 
-git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
-mv CDCol/* ~/
-
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
-ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
-REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
-BRANCH="desacoplado"
+ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
+OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
+BRANCH="datacube-1.6.2"
 
 while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    echo "Waiting while other process ends installs (dpkg/lock is locked)"
    sleep 1
 done
+
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git --branch desacoplado
+mv CDCol/* ~/
+
 sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg|| exit 1
 
 
+#CONDA INSTALL
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
-	bash ~/instaladores/Anaconda2-4.1.1-Linux-x86_64.sh -b -p $HOME/anaconda2
-	export PATH="$HOME/anaconda2/bin:$PATH"
-	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
+	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda
+	export PATH="$HOME/anaconda/bin:$PATH"
+	echo 'export PATH="$HOME/anaconda/bin:$PATH"'>>$HOME/.bashrc
 fi
 
+source $HOME/.bashrc
+conda install -y python=3.6.8
+conda install -y jupyter matplotlib scipy
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
-pip install --upgrade pip
-pip install rasterio==1.0a9 --force-reinstall
-
-git clone $REPO
-cd agdc-v2
-git checkout $BRANCH
-python setup.py install
 
 
 
-cat <<EOF >>~/.datacube.conf
+cat <<EOF >~/.datacube.conf
 [datacube]
 db_database: datacube
 
@@ -59,8 +57,16 @@ db_username: $USUARIO_CUBO
 db_password: $PASSWORD_CUBO
 EOF
 
+git clone $OPEN_DATA_CUBE_REPOSITORY --branch $BRANCH
+cd datacube-core
+python setup.py install
+
 datacube -v system init
+datacube system check
+
 source $HOME/.bashrc
+
+
 sudo groupadd ingesters
 sudo mkdir /dc_storage
 sudo mkdir /source_storage
@@ -74,11 +80,6 @@ sudo chown $USUARIO_CUBO /web_storage
 pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes")
 sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002
 
-#TODO: At this point an empty datacube is installed. Next steps are create datasets types, index datasets and ingest.  
-#datacube product add ~/agdc-v2/docs/config_samples/dataset_types/ls7_scenes.yaml
-datacube product add ~/agdc-v2/docs/config_samples/dataset_types/ls5_scenes.yaml
-datacube product add ~/agdc-v2/docs/config_samples/dataset_types/ls8_scenes.yaml
-datacube product add ~/agdc-v2/docs/config_samples/dataset_types/modis_tiles.yaml
 
 #MOUNT NFS SERVER
 cd $HOME
@@ -100,7 +101,7 @@ sudo mount /web_storage
 
 #Configuracion del CRON de ingesta
 conda install -c conda-forge psycopg2 PyYAML
-git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git
+git clone  git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git --branch open_data_cube
 cd ingestion-scheduler
 cat <<EOF >settings.conf
 [database]
@@ -126,36 +127,3 @@ sudo chmod 764 ~/ingestion-scheduler/scripts/generate_thumbnails.sh
 (crontab -l 2>/dev/null; echo "0   0   *   *   *	/home/cubo/ingestion-scheduler/run.sh >> /home/cubo/ingestion-scheduler/out.log 2>> /home/cubo/ingestion-scheduler/err.log") | crontab -
 
 
-#EXECUTION MONITOR
-cd $HOME
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/execution-monitor.git
-cd execution-monitor
-sudo cat <<EOF >settings.conf
-[database]
-host = $ipdb
-port = 5432
-name = ideam
-user = portal_web
-password = CDCol_web_2016
-
-#La seccion roja modificarla por la ip publica de la api
-[flower]
-url = http://$ipweb:8082
-
-[other]
-lock_file = pid.lock
-results_path = /web_storage/results
-make_mosaic_script = /home/cubo/execution-monitor/scripts/make_mosaic.sh
-make_gif_script = /home/cubo/execution-monitor/scripts/generate_gif.sh
-gif_algorithm_id = 0
-EOF
-
-(crontab -l 2>/dev/null; echo "*   *   *   *   *	/home/cubo/execution-monitor/run.sh >> /home/cubo/execution-monitor/out.log 2>> /home/cubo/execution-monitor/err.log") | crontab -
-
-#GEOTIFF CONVERTER
-cd $HOME
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/geotiff-converter.git
-cd geotiff-converter
-sudo cat <<EOF >settings.conf
-
-EOF

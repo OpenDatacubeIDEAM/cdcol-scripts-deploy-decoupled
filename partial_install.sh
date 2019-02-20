@@ -21,7 +21,7 @@ USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
-BRANCH="develop"
+BRANCH="datacube-1.6.2"
 
 
 while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
@@ -41,7 +41,7 @@ if ! hash "conda" > /dev/null; then
 fi
 
 source $HOME/.bashrc
-conda install -y python=3.7.2
+conda install -y python=3.6.8
 conda install -y jupyter matplotlib scipy
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
