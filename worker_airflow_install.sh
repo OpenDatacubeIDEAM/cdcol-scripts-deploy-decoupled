@@ -45,6 +45,7 @@ source $HOME/.bashrc
 conda install -y python=3.6.8
 conda install -y jupyter matplotlib scipy
 conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+ 
 
 
 
@@ -150,3 +151,5 @@ sudo systemctl daemon-reload
 sudo systemctl start airflow-worker
 sudo systemctl enable airflow-worker
 
+
+conda install -y -c anaconda scikit-learn
