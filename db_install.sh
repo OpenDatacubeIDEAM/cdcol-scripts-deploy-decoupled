@@ -4,6 +4,7 @@
 # 1. Install Postgres Database Manager System
 # 2. Set the 'datacube' database
 # 3. Set the 'airflow' database
+# 4. Install redis
 
 
 if [[ $(id -u) -eq 0 ]] 
@@ -39,6 +40,7 @@ sudo apt install -y \
 	rabbitmq-server \
 	|| exit 1
 
+# Create 'cubo' user
 sudo -u postgres psql postgres<<EOF
 create user $USUARIO_CUBO with password '$PASSWORD_CUBO';
 alter user $USUARIO_CUBO createdb;

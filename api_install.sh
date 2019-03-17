@@ -230,7 +230,7 @@ $ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
 EOF
 sudo chmod o-w /etc/fstab
 
-sudo mkdir /dc_storage /web_storage /source_storage
+sudo mkdir -p /dc_storage /web_storage /source_storage
 sudo chown cubo:root /dc_storage /web_storage /source_storage
 sudo mount /dc_storage
 sudo mount /source_storage
