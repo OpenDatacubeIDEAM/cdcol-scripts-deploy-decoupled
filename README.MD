@@ -101,3 +101,23 @@ If you need to keep instalation logs use **tee** to save **stdout** and **stderr
 ```sh
 bash api_install.sh db_ip nfs_ip > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)
 ```
+
+## Install Ingestor
+
+This script will install
+
+1. [CDCol](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol).
+2. [Open Data Cube core](https://github.com/opendatacube/datacube-core.git). 
+3. [Ingestor](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/ingestion-scheduler) cronjob. 
+
+Run the script as follows
+
+```sh 
+bash ingestion_install.sh db_ip nfs_ip
+```
+
+If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
+
+```sh
+bash ingestion_install.sh db_ip nfs_ip 2>&1 | tee logs.txt
+```

@@ -46,7 +46,6 @@ sudo apt install -y \
 	rabbitmq-server \
 	imagemagick \
 	ffmpeg \
-	nginx \
 	|| exit 1
 
 echo "Install CDCol modules ..."
@@ -151,6 +150,10 @@ cd api-rest
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
 
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado: 
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
 
 sudo cat <<EOF >env_vars
 # Connection for Web site database
@@ -189,7 +192,10 @@ GEN_GIF_SCRIPT='/home/cubo/api-rest/scripts/generate_gif.sh'
 RESULTS='/web_storage/results'
 EOF
 
+# Symlink placed into the api-rest
 ln -s ~/cdcol_celery
+
+# Createing the gunicorn systemd service to serve the api
 sudo touch /etc/systemd/system/gunicorn.service
 sudo chmod o+w /etc/systemd/system/gunicorn.service
 cat <<EOF >/etc/systemd/system/gunicorn.service
