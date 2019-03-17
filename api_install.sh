@@ -17,11 +17,9 @@ exit 1
 fi
 
 ipdb=$1
-ipweb=$2
-ipnfs=$3
+ipnfs=$2
 
 echo "DB IP : $ipdb"
-echo "WEB IP : $ipweb"
 echo "NFS IP : $ipnfs"
 
 echo "Install datacube dependencies ..."

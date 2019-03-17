@@ -90,15 +90,14 @@ This script will install:
 Run the script as follows, replace
 
 * db_ip: IP Adress database server
-* web_ip: IP Adress web server 
 * nfs_ip: IP Adress nfs server 
 
 ```sh 
-bash api_install.sh db_ip web_ip nfs_ip
+bash api_install.sh db_ip nfs_ip
 ```
 
 If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
 
 ```sh
-bash api_install.sh db_ip web_ip nfs_ip > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)
+bash api_install.sh db_ip nfs_ip > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)
 ```
