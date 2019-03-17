@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# This script will
+# 1. Install Postgres Database Manager System
+# 2. Set the 'datacube' database
+# 3. Set the 'airflow' database
+
+
 if [[ $(id -u) -eq 0 ]] 
 then 
 cat <<EOF
@@ -11,7 +17,7 @@ exit 1
 fi
 
 IP=`hostname -I | awk '{ print $1 }'`
-echo IP
+echo $IP
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 PASSWORD_AIRFLOW='cubocubo'
