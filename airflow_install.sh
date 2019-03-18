@@ -116,7 +116,8 @@ sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
 
-mkdir  /web_storage/{dags,plugins,logs}
+mkdir  /web_storage/{dags,plugins,logs,algorithms,templates}
+mkdir  /web_storage/algorithms/workflows
 
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
