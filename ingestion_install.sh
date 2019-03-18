@@ -40,7 +40,8 @@ sudo apt install -y \
 	libgdal-doc \
 	git \
 	wget \
-	htop \imagemagick \
+	htop \
+	imagemagick \
 	ffmpeg \
 	|| exit 1
 
