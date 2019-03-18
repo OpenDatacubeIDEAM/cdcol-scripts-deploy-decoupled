@@ -16,8 +16,11 @@ EOF
 exit 1
 fi
 
-ipdb=$1
-ipnfs=$2
+echo "¿Cuál es la ip del servidor de Bases de Datos?"
+read ipdb
+
+echo "¿Cuál es la ip del servidor NFS?"
+read ipnfs
 
 echo "DB IP : $ipdb"
 echo "NFS IP : $ipnfs"
