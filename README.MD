@@ -35,7 +35,7 @@ bash nfs_install.sh 10.0.0.1/16 192.168.0.0/32
 If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
 
 ```sh
-bash nfs_install.sh web_ip/mask workers_net/mask > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)
+bash nfs_install.sh web_ip/mask workers_net/mask 2>&1 | tee logs.txt
 ```
 
 
@@ -57,7 +57,7 @@ bash db_install.sh
 If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
 
 ```sh
-bash db_install.sh > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)
+bash db_install.sh 2>&1 | tee logs.txt
 ```
 
 To allow remote connections to the database perfom the following changes. Modify the file **postgresql.conf**.
@@ -89,17 +89,14 @@ This script will install:
 
 Run the script as follows, replace
 
-* db_ip: IP Adress database server
-* nfs_ip: IP Adress nfs server 
-
 ```sh 
-bash api_install.sh db_ip nfs_ip
+bash api_install.sh 
 ```
 
 If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
 
 ```sh
-bash api_install.sh db_ip nfs_ip > >(tee -a stdout.log) 2> >(tee -a stderr.log >&2)
+bash api_install.sh db_ip nfs_ip 2>&1 | tee logs.txt
 ```
 
 ## Install Ingestor
@@ -113,11 +110,11 @@ This script will install
 Run the script as follows
 
 ```sh 
-bash ingestion_install.sh db_ip nfs_ip
+bash ingestion_install.sh
 ```
 
 If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
 
 ```sh
-bash ingestion_install.sh db_ip nfs_ip 2>&1 | tee logs.txt
+bash ingestion_install.sh 2>&1 | tee logs.txt
 ```
