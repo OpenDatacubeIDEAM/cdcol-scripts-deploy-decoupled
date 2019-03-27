@@ -95,7 +95,7 @@ sed -i "s%endpoint_url = .*%endpoint_url = http://$IP:8080%" "$AIRFLOW_HOME/airf
 sed -i "s%base_url = .*%base_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%flower_port = .*%flower_port = 8082%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
-sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
+
 
 #MOUNT NFS SERVER
 cd $HOME
@@ -116,8 +116,12 @@ sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
 
+<<<<<<< HEAD
 mkdir  /web_storage/{dags,plugins,logs,algorithms,templates}
 mkdir  /web_storage/algorithms/workflows
+=======
+mkdir  /web_storage/{dags,plugins}
+>>>>>>> parent of 1be9965... carpeta de logs
 
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
