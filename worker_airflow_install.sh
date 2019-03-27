@@ -91,7 +91,7 @@ sed -i "s%endpoint_url = .*%endpoint_url = http://$ipairflow:8080%" "$AIRFLOW_HO
 sed -i "s%base_url = .*%base_url = http://$ipairflow:8080%" "$AIRFLOW_HOME/airflow.cfg"
 
 sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
-#sed -i "s%default_timezone = .*%default_timezone = America/Bogota%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
 
 
 #MOUNT NFS SERVER

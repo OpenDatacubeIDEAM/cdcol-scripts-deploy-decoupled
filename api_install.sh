@@ -1,65 +1,29 @@
 #!/bin/bash
-
-# This script will install
-# 1. CDCol: modules that use the open datacube API for Colombian's needs.
-# 2. Open Data Cube (ODC) API from Australian Geoscience Data Cube v2.
-# 3. RabbitMQ: It is an open source multi-protocol messaging broker.
-# 4. API Rest: It exposes some features of the ODC through internet. 
-
-if [[ $(id -u) -eq 0 ]] 
-then 
-cat <<EOF
-This script must not be excecuted as root \
-or using sudo (althougth the user must be \
-sudoer and password will be asked in some steps)
-EOF
-exit 1
-fi
+if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
 read ipdb
 
+echo "¿Cuál es la ip del servidor del web?"
+read ipweb
+
 echo "¿Cuál es la ip del servidor NFS?"
 read ipnfs
 
-echo "DB IP : $ipdb"
-echo "NFS IP : $ipnfs"
 
-echo "Install datacube dependencies ..."
+
 sudo apt-get update
-sudo apt install -y \
-	openssh-server \
-	postgresql-9.5 \
-	postgresql-client-9.5 \
-	postgresql-contrib-9.5 \
-	libgdal1-dev \
-	libhdf5-serial-dev \
-	libnetcdf-dev \
-	hdf5-tools \
-	netcdf-bin \
-	gdal-bin \
-	pgadmin3 \
-	postgresql-doc-9.5 \
-	libhdf5-doc \
-	netcdf-doc \
-	libgdal-doc \
-	git \
-	wget \
-	htop \
-	rabbitmq-server \
-	imagemagick \
-	ffmpeg \
-	|| exit 1
 
-echo "Install CDCol modules ..."
 git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
 mv CDCol/* ~/
 
-
-echo "Install datacube ..."
-
-# Anaconda is required to install all datacube python dependencies
+USUARIO_CUBO="$(whoami)"
+PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
+REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
+BRANCH="desacoplado"
+
+sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 postgresql-doc-9.5 libhdf5-doc netcdf-doc libgdal-doc git wget htop rabbitmq-server imagemagick ffmpeg nginx|| exit 1
 
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
@@ -68,34 +32,14 @@ if ! hash "conda" > /dev/null; then
 	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
 fi
 
-conda install -y \
-	psycopg2 \
-	gdal \
-	libgdal \
-	hdf5 \
-	rasterio \
-	netcdf4 \
-	libnetcdf \
-	pandas \
-	shapely \
-	ipywidgets \
-	scipy \
-	numpy
+conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
 
-# Install Australian Geoscience Data Cube v2 from Uniandes fork repo
-REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
-BRANCH="desacoplado"
-
-# Cloning repository into a local directory
 git clone $REPO
 cd agdc-v2
 git checkout $BRANCH
 python setup.py install
 
-# Setting up datacube database
-USUARIO_CUBO="$(whoami)"
-PASSWORD_CUBO='ASDFADFASSDFA'
 
 cat <<EOF >~/.datacube.conf
 [datacube]
@@ -110,29 +54,22 @@ db_username: $USUARIO_CUBO
 db_password: $PASSWORD_CUBO
 EOF
 
-# Initialize datacube system
 datacube -v system init
-
-
 source $HOME/.bashrc
 sudo groupadd ingesters
-
 sudo mkdir /dc_storage
 sudo mkdir /source_storage
-sudo mkdir /web_storage
-
-sudo chmod -R g+rwxs /dc_storage
-sudo chmod -R g+rwxs /source_storage
-
-sudo chown $USUARIO_CUBO:ingesters /source_storage
 sudo chown $USUARIO_CUBO:ingesters /dc_storage
+sudo chmod -R g+rwxs /dc_storage
+sudo chown $USUARIO_CUBO:ingesters /source_storage
+sudo chmod -R g+rwxs /source_storage
+sudo mkdir /web_storage
 sudo chown $USUARIO_CUBO /web_storage
-
-# Create the ingester user
+#Crear un usuario ingestor
 pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes")
 sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002
 
-echo "Install rabbitmqctl ..."
+
 sudo rabbitmqctl add_user cdcol cdcol
 sudo rabbitmqctl add_vhost cdcol
 sudo rabbitmqctl set_user_tags cdcol cdcol_tag
@@ -146,17 +83,13 @@ sudo rabbitmq-plugins enable rabbitmq_management
 sudo rabbitmqctl set_user_tags airflow airflow_tag administrator
 sudo service rabbitmq-server restart
 
-echo "Install API Rest ..."
 cd $HOME
+
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git
 cd api-rest
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
 
-# To avoid this error
-# OSError: [Errno 13] Permiso denegado: 
-# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
-sudo chown -R cubo:cubo /home/cubo/.cache
 
 sudo cat <<EOF >env_vars
 # Connection for Web site database
@@ -195,10 +128,7 @@ GEN_GIF_SCRIPT='/home/cubo/api-rest/scripts/generate_gif.sh'
 RESULTS='/web_storage/results'
 EOF
 
-# Symlink placed into the api-rest
 ln -s ~/cdcol_celery
-
-# Createing the gunicorn systemd service to serve the api
 sudo touch /etc/systemd/system/gunicorn.service
 sudo chmod o+w /etc/systemd/system/gunicorn.service
 cat <<EOF >/etc/systemd/system/gunicorn.service
@@ -225,7 +155,7 @@ sudo systemctl daemon-reload
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
 
-echo "Mount NFS Server ..."
+#MOUNT NFS SERVER
 cd $HOME
 
 sudo apt install nfs-common
@@ -237,8 +167,34 @@ $ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
 EOF
 sudo chmod o-w /etc/fstab
 
-sudo mkdir -p /dc_storage /web_storage /source_storage
+sudo mkdir /dc_storage /web_storage /source_storage
 sudo chown cubo:root /dc_storage /web_storage /source_storage
 sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
+
+
+
+#CDCOL_CLEANER
+
+cd $HOME
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/cdcol-cleaner.git
+cd cdcol-cleaner
+sudo chmod 775 ~/cdcol-cleaner/run.sh
+sudo cat <<EOF >settings.conf
+[database]
+host = $ipdb
+port = 5432
+name = ideam
+user = portal_web
+password = CDCol_web_2016
+ 
+[paths]
+results_path = /web_storage/results
+
+[other]
+lock_file = pid.lock
+days = 360
+EOF
+(crontab -l 2>/dev/null; echo "0   0   *   *   *	/home/cubo/cdcol-cleaner/run.sh >> /home/cubo/cdcol-cleaner/out.log 2>> /home/cubo/cdcol-cleaner/err.log") | crontab -
+
