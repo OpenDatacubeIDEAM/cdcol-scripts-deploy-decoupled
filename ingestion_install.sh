@@ -16,7 +16,7 @@ USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
-BRANCH="datacube-1.6.2"
+BRANCH="develop"
 
 while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    echo "Waiting while other process ends installs (dpkg/lock is locked)"
