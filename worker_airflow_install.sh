@@ -74,7 +74,15 @@ cd $HOME
 
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 conda install -y -c conda-forge "airflow==1.10.1"
+
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado: 
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
+sudo chown -R cubo:cubo /home/cubo/.conda
+
 pip install apache-airflow --upgrade
+
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
     echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
