@@ -21,9 +21,6 @@ ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
 BRANCH="desacoplado"
 
-
-
-
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
 	bash ~/instaladores/Anaconda2-4.1.1-Linux-x86_64.sh -b -p $HOME/anaconda2
@@ -56,9 +53,15 @@ sudo systemctl daemon-reload
 sudo systemctl start flower
 sudo systemctl enable flower
 
-
 sudo apt-get update
 sudo apt-get install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx virtualenv gunicorn git
+
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado: 
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
+sudo chown -R cubo:cubo /home/cubo/.conda
+
 pip install virtualenv
 virtualenv v_ideam
 source v_ideam/bin/activate
