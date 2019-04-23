@@ -14,61 +14,13 @@ read ipnfs
 
 sudo apt-get update
 
-git clone -b desacoplado git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git
-mv CDCol/* ~/
-
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
 REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
 BRANCH="desacoplado"
 
-sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 postgresql-doc-9.5 libhdf5-doc netcdf-doc libgdal-doc git wget htop rabbitmq-server imagemagick ffmpeg nginx|| exit 1
-
-if ! hash "conda" > /dev/null; then
-	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
-	bash ~/instaladores/Anaconda2-4.1.1-Linux-x86_64.sh -b -p $HOME/anaconda2
-	export PATH="$HOME/anaconda2/bin:$PATH"
-	echo 'export PATH="$HOME/anaconda2/bin:$PATH"'>>$HOME/.bashrc
-fi
-
-conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
-
-
-git clone $REPO
-cd agdc-v2
-git checkout $BRANCH
-python setup.py install
-
-
-cat <<EOF >~/.datacube.conf
-[datacube]
-db_database: datacube
-
-# A blank host will use a local socket. Specify a hostname to use TCP.
-db_hostname: $ipdb
-
-# Credentials are optional: you might have other Postgres authentication configured.
-# The default username otherwise is the current user id.
-db_username: $USUARIO_CUBO
-db_password: $PASSWORD_CUBO
-EOF
-
-datacube -v system init
-source $HOME/.bashrc
-sudo groupadd ingesters
-sudo mkdir /dc_storage
-sudo mkdir /source_storage
-sudo chown $USUARIO_CUBO:ingesters /dc_storage
-sudo chmod -R g+rwxs /dc_storage
-sudo chown $USUARIO_CUBO:ingesters /source_storage
-sudo chmod -R g+rwxs /source_storage
-sudo mkdir /web_storage
-sudo chown $USUARIO_CUBO /web_storage
-#Crear un usuario ingestor
-pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes")
-sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002
-
+sudo apt install -y openssh-server git wget htop rabbitmq-server nginx|| exit 1
 
 sudo rabbitmqctl add_user cdcol cdcol
 sudo rabbitmqctl add_vhost cdcol
@@ -87,11 +39,12 @@ cd $HOME
 
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git
 cd api-rest
+git checkout newDevelop
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
 
 
-sudo cat <<EOF >env_vars
+sudo cat <<EOF >environment
 # Connection for Web site database
 WEB_DBHOST='$ipdb'
 WEB_DBPORT='5432'
@@ -115,20 +68,25 @@ TO_INGEST='/source_storage'
 # Web Storage folder
 WEB_THUMBNAILS='/web_storage/thumbnails'
 
-# Celery generic task script
-GEN_TASK_MOD='cdcol_celery.tasks'
- 
-#Convert NetCDF to TIFF
-TIFF_CONV_SCRIPT='/home/cubo/api-rest/scripts/download_geotiff.sh'
- 
 #GIF script
 GEN_GIF_SCRIPT='/home/cubo/api-rest/scripts/generate_gif.sh'
  
 #Results path
 RESULTS='/web_storage/results'
+
+#Airflow dag path
+AIRFLOW_DAG_PATH='/web_storage/dags'
+
+#Template Path
+TEMPLATE_PATH='/web_storage/templates'
+
+#Donwload Path
+DOWNLOAD_PATH='/web_storage/downloads'
+
+#Workflow Algorithms Path
+WORKFLOW_ALGORITHMS_PATH='/web_storage/algorithms/workflows'
 EOF
 
-ln -s ~/cdcol_celery
 sudo touch /etc/systemd/system/gunicorn.service
 sudo chmod o+w /etc/systemd/system/gunicorn.service
 cat <<EOF >/etc/systemd/system/gunicorn.service
@@ -154,47 +112,3 @@ sudo systemctl stop gunicorn
 sudo systemctl daemon-reload
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
-
-#MOUNT NFS SERVER
-cd $HOME
-
-sudo apt install nfs-common
-sudo chmod o+w /etc/fstab
-sudo cat <<EOF >>/etc/fstab
-$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
-$ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
-$ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
-EOF
-sudo chmod o-w /etc/fstab
-
-sudo mkdir /dc_storage /web_storage /source_storage
-sudo chown cubo:root /dc_storage /web_storage /source_storage
-sudo mount /dc_storage
-sudo mount /source_storage
-sudo mount /web_storage
-
-
-
-#CDCOL_CLEANER
-
-cd $HOME
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/cdcol-cleaner.git
-cd cdcol-cleaner
-sudo chmod 775 ~/cdcol-cleaner/run.sh
-sudo cat <<EOF >settings.conf
-[database]
-host = $ipdb
-port = 5432
-name = ideam
-user = portal_web
-password = CDCol_web_2016
- 
-[paths]
-results_path = /web_storage/results
-
-[other]
-lock_file = pid.lock
-days = 360
-EOF
-(crontab -l 2>/dev/null; echo "0   0   *   *   *	/home/cubo/cdcol-cleaner/run.sh >> /home/cubo/cdcol-cleaner/out.log 2>> /home/cubo/cdcol-cleaner/err.log") | crontab -
-
