@@ -87,16 +87,14 @@ After=network.target
 User=cubo
 Group=cubo
 WorkingDirectory=/home/cubo/api-rest
-EnvironmentFile=/home/cubo/api-rest/env_vars
-ExecStart=/home/cubo/anaconda2/bin/gunicorn --timeout 36000 --bind 0.0.0.0:8000 --error-logfile /home/cubo/gunicorn-error.log cdcol.wsgi:application
+EnvironmentFile=/home/cubo/api-rest/environment
+ExecStart=/home/cubo/anaconda/bin/gunicorn --timeout 36000 --bind 0.0.0.0:8000 --error-logfile /home/cubo/gunicorn-error.log cdcol.wsgi:application
  
 [Install]
 WantedBy=multi-user.target
 EOF
 sudo chmod o-w /etc/systemd/system/gunicorn.service
 
-sudo systemctl stop gunicorn
-/home/cubo/anaconda2/bin/gunicorn --bind 0.0.0.0:8000 --error-logfile /home/cubo/gunicorn-error.log cdcol.wsgi:application
 sudo systemctl stop gunicorn
 sudo systemctl daemon-reload
 sudo systemctl start gunicorn
