@@ -4,21 +4,10 @@ if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
 read ipdb
 
-echo "¿Cuál es la ip del servidor del web?"
-read ipweb
-
-echo "¿Cuál es la ip del servidor NFS?"
-read ipnfs
-
-
-
 sudo apt-get update
 
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
-ANACONDA_URL="https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh"
-REPO="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/agdc-v2.git"
-BRANCH="desacoplado"
 
 sudo apt install -y openssh-server git wget htop rabbitmq-server nginx|| exit 1
 
