@@ -138,6 +138,11 @@ server {
     alias /home/cubo/projects/web-app/static;
   }
 
+  # serving media files
+  location /media {
+    alias /home/cubo/projects/web-app/media;
+  }
+
   # redirect requests to the web server
   location / {
     proxy_read_timeout 36000;
