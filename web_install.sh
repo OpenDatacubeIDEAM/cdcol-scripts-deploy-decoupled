@@ -11,9 +11,9 @@ echo "¿Cuál es la ip del servidor NFS?"
 read ipnfs
 
 # Add hosts name to etc/hosts
-sudo sed "2i$ipdb    db" /etc/hosts
-sudo sed "2i$ipapi   api" /etc/hosts
-sudo sed "2i$ipnfs   nfs" /etc/hosts
+sudo sed -i "2i$ipdb    db" /etc/hosts
+sudo sed -i "2i$ipapi   api" /etc/hosts
+sudo sed -i "2i$ipnfs   nfs" /etc/hosts
 
 sudo apt update
 sudo apt install \
@@ -41,6 +41,11 @@ cd Python-3.6.8
 make
 make test
 sudo make install
+
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado: 
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
 
 # Install web application
 cd ~
