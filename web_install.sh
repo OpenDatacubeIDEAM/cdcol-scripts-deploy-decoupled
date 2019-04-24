@@ -46,11 +46,13 @@ sudo make install
 # OSError: [Errno 13] Permiso denegado: 
 # '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
 sudo chown -R cubo:cubo /home/cubo/.cache
+sudo chown -R cubo:cubo /usr/local/lib/python3.6
+sudo chown -R cubo:cubo /usr/local/bin
 
 # Install web application
 cd ~
 pip3.6 install virtualenv
-virtualenv v_ideam
+virtualenv --python=python3.6 v_ideam
 source ~/v_ideam/bin/activate
 
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git -b newDevelop ~/projects/web-app
@@ -63,6 +65,7 @@ export $(egrep -v '^#' environment | xargs)
 
 python3.6 manage.py makemigrations
 python3.6 manage.py migrate
+python3.6 manage.py migrate --run-syncdb
 python3.6 manage.py collectstatic
 
 # Loading application initial data
@@ -164,3 +167,4 @@ sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
 cd $HOME
+
