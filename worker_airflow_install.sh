@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
