@@ -6,14 +6,15 @@ read ipdb
 
 conda clean --all
 conda remove --all --force-remove
-conda install anaconda-clean
-anaconda-clean --yes
+pip uninstall -y -r <(pip freeze)
+conda remove --all --force-remove
+
 
 cd $HOME
 rm -rf *
 
 export PATH=${PATH/':/home/cubo/anaconda2/bin'/}
-sed -i '$ d' ~/.bashrc
+sed -i 's/anaconda2/anaconda/g' .bashrc
 
 sudo apt-get update
 
@@ -70,7 +71,7 @@ source $HOME/.bashrc
 
 cd $HOME
 #Configuracion del CRON de ingesta
-conda install -c conda-forge PyYAML
+conda install -y  -c conda-forge PyYAML
 git clone  git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git --branch open_data_cube
 cd ingestion-scheduler
 cat <<EOF >settings.conf
