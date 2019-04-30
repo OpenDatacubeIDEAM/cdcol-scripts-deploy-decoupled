@@ -28,9 +28,6 @@ while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    sleep 1
 done
 
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git --branch desacoplado
-mv CDCol/* ~/
-
 sudo apt install -y openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick ffmpeg|| exit 1
 
 
@@ -71,22 +68,9 @@ datacube system check
 
 source $HOME/.bashrc
 
-
-sudo groupadd ingesters
-sudo mkdir /dc_storage
-sudo mkdir /source_storage
-sudo chown $USUARIO_CUBO:ingesters /dc_storage
-sudo chmod -R g+rwxs /dc_storage
-sudo chown $USUARIO_CUBO:ingesters /source_storage
-sudo chmod -R g+rwxs /source_storage
-sudo mkdir /web_storage
-sudo chown $USUARIO_CUBO /web_storage
-#Crear un usuario ingestor
-pass=$(perl -e 'print crypt($ARGV[0], "password")' "uniandes")
-sudo useradd  --no-create-home -G ingesters -p $pass ingestor --shell="/usr/sbin/nologin" --home /source_storage  -K UMASK=002
-
+cd $HOME
 #Configuracion del CRON de ingesta
-conda install -c conda-forge psycopg2 PyYAML
+conda install -c conda-forge PyYAML
 git clone  git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git --branch open_data_cube
 cd ingestion-scheduler
 cat <<EOF >settings.conf
