@@ -30,7 +30,7 @@ git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git
 cd api-rest
 git checkout newDevelop
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
-conda install --file requirements.txt
+conda install -c conda-forge --file requirements.txt
 
 
 sudo cat <<EOF >environment
