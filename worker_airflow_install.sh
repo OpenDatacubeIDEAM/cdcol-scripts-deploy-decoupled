@@ -82,7 +82,7 @@ conda install -y -c conda-forge "airflow==1.10.1"
 sudo chown -R cubo:cubo /home/cubo/.cache
 sudo chown -R cubo:cubo /home/cubo/.conda
 
-pip install apache-airflow --upgrade
+pip install "apache-airflow==1.10.2"
 
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
