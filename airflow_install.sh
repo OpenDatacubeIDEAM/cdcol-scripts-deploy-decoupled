@@ -96,6 +96,7 @@ sed -i "s%base_url = .*%base_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%flower_port = .*%flower_port = 8082%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%dags_are_paused_at_creation = .*% = False%" "$AIRFLOW_HOME/airflow.cfg"
 
 #MOUNT NFS SERVER
 cd $HOME
