@@ -129,7 +129,11 @@ server {
   location / {
     proxy_read_timeout 36000;
     client_max_body_size 500M;
-    proxy_set_header Host $http_host;
+
+    # Django allouth use this setting to set all 
+    # host urls for account activation and verification
+    proxy_set_header Host cdcol.ideam.gov.co;
+
     proxy_pass http://127.0.0.1:8080;
   }
 }
