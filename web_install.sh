@@ -59,14 +59,13 @@ source ~/v_ideam/bin/activate
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git -b newDevelop ~/projects/web-app
 cd ~/projects/web-app
 
-pip3.6 install -r requirements.txt
-
 # Load web app env variables
 export $(egrep -v '^#' environment | xargs)
 
+pip3.6 install -r requirements.txt
+
 python3.6 manage.py makemigrations
 python3.6 manage.py migrate
-python3.6 manage.py migrate --run-syncdb
 python3.6 manage.py collectstatic
 
 # Loading application initial data
