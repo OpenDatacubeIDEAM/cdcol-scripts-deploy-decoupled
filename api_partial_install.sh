@@ -9,6 +9,13 @@ PASSWORD_AIRFLOW='cubocubo'
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado:
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
+sudo chown -R cubo:cubo /home/cubo/.conda
+
+
 sudo apt install -y rabbitmq-server || exit 1
 
 cd $HOME
