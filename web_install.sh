@@ -35,13 +35,28 @@ sudo apt install \
 # This installs 
 # * pip3.6
 # * python3.6
-wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tar.xz
-tar xf Python-3.6.8.tar.xz
-cd Python-3.6.8
-./configure
-make
-make test
-sudo make install
+#export PYTHONHTTPSVERIFY=0
+#wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tar.xz
+#tar xf Python-3.6.8.tar.xz
+#cd Python-3.6.8
+#./configure
+#make
+#make test
+#sudo make install
+
+ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
+if ! hash "conda" > /dev/null; then
+	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
+	bash ~/instaladores/Anaconda3-5.3.0-Linux-x86_64.sh -b -p $HOME/anaconda
+	export PATH="$HOME/anaconda/bin:$PATH"
+	export SLUGIFY_USES_TEXT_UNIDECODE=yes
+	echo 'export PATH="$HOME/anaconda/bin:$PATH"'>>$HOME/.bashrc
+	echo 'export SLUGIFY_USES_TEXT_UNIDECODE=yes'>>$HOME/.bashrc
+fi
+
+source $HOME/.bashrc
+conda install -y python=3.6.8
+
 
 # To avoid this error
 # OSError: [Errno 13] Permiso denegado: 
@@ -52,7 +67,7 @@ sudo chown -R cubo:cubo /usr/local/bin
 
 # Install web application
 cd ~
-pip3.6 install virtualenv
+#pip3.6 install virtualenv
 virtualenv --python=python3.6 v_ideam
 source ~/v_ideam/bin/activate
 
@@ -69,10 +84,10 @@ python3.6 manage.py migrate
 python3.6 manage.py collectstatic
 
 # Loading application initial data
-python3.6 manage.py loaddata data/1.group.json
-python3.6 manage.py loaddata data/2.user.json
-python3.6 manage.py loaddata data/3.profile.json
-python3.6 manage.py loaddata data/4.topic.json
+#python3.6 manage.py loaddata data/1.group.json
+#python3.6 manage.py loaddata data/2.user.json
+#python3.6 manage.py loaddata data/3.profile.json
+#python3.6 manage.py loaddata data/4.topic.json
 
 deactivate
 
