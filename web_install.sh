@@ -29,7 +29,7 @@ sudo apt install \
   virtualenv
 
 # Install CDCol
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git -b desacoplado ~/CDCol
+#git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git -b desacoplado ~/CDCol
 
 # Compile and Install Python 3.6.8
 # This installs 
