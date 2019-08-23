@@ -120,9 +120,9 @@ sudo mount /web_storage
 
 cd $HOME
 
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git
-cd api-rest
-git checkout newDevelop
+git clone git@github.com:OpenDatacubeIDEAM/cdcol-cdcol-api-rest.git
+cd cdcol-cdcol-api-rest
+
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
 
@@ -152,7 +152,7 @@ TO_INGEST='/source_storage'
 WEB_THUMBNAILS='/web_storage/thumbnails'
 
 #GIF script
-GEN_GIF_SCRIPT='/home/cubo/api-rest/scripts/generate_gif.sh'
+GEN_GIF_SCRIPT='/home/cubo/cdcol-api-rest/scripts/generate_gif.sh'
  
 #Results path
 RESULTS='/web_storage/results'
@@ -180,8 +180,8 @@ After=network.target
 [Service]
 User=cubo
 Group=cubo
-WorkingDirectory=/home/cubo/api-rest
-EnvironmentFile=/home/cubo/api-rest/environment
+WorkingDirectory=/home/cubo/cdcol-api-rest
+EnvironmentFile=/home/cubo/cdcol-api-rest/environment
 ExecStart=/home/cubo/anaconda/bin/gunicorn --timeout 36000 --bind 0.0.0.0:8000 --error-logfile /home/cubo/gunicorn-error.log cdcol.wsgi:application
  
 [Install]
