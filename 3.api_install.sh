@@ -18,7 +18,7 @@ USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
-BRANCH="develop"
+BRANCH="datacube-1.6.1"
 
 sudo apt install -y rabbitmq-server openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick  ffmpeg|| exit 1
 
