@@ -45,7 +45,11 @@ conda install -y jupyter matplotlib scipy
 conda install -y gdal libgdal
 conda install -y psycopg2 hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
-
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado: 
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
+sudo chown -R cubo:cubo /home/cubo/.conda
 
 cat <<EOF >~/.datacube.conf
 [datacube]
