@@ -36,7 +36,8 @@ fi
 source $HOME/.bashrc
 conda install -y python=3.6.8
 conda install -y jupyter matplotlib scipy
-conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+conda install -y gdal libgdal
+conda install -y psycopg2 hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
 
 
@@ -121,7 +122,7 @@ sudo mount /web_storage
 cd $HOME
 
 git clone git@github.com:OpenDatacubeIDEAM/cdcol-cdcol-api-rest.git
-cd cdcol-cdcol-api-rest
+cd cdcol-api-rest
 
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 pip install -r requirements.txt
