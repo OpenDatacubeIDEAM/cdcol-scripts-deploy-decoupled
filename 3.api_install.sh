@@ -33,6 +33,12 @@ if ! hash "conda" > /dev/null; then
 	echo 'export SLUGIFY_USES_TEXT_UNIDECODE=yes'>>$HOME/.bashrc
 fi
 
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado: 
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
+sudo chown -R cubo:cubo /home/cubo/.conda
+
 source $HOME/.bashrc
 conda install -y python=3.6.8
 conda install -y jupyter matplotlib scipy
