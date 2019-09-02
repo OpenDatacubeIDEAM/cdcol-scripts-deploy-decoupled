@@ -36,7 +36,6 @@ ssh-keygen -t rsa -C aa.vivas@uniandes.edu.co -b 4096
 
 Clone the repository and install the NFS server. This will create */dc_storage*, */web_storage* and */source_storage* shared directories.
 
-
 ```sh 
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
 cd scripts-despliegue-desacoplado/
@@ -52,34 +51,20 @@ This script will
 3. Set the 'airflow' database
 4. Install redis
 
-Run the script as follows:
-
-```sh 
-bash db_install.sh
-```
-
-If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
+Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
 ```sh
-bash db_install.sh 2>&1 | tee logs.txt
+mkdir ~/.ssh
+scp cubo@172.24.99.217:/home/cubo/.ssh/id_rsa* .ssh/
+sudo chown -R cubo:cubo .ssh
 ```
 
-To allow remote connections to the database perfom the following changes. Modify the file **postgresql.conf**.
+Run the script as follows:
 
-```sh 
-sudo nano /etc/postgresql/9.5/main/postgresql.conf
-
-listen_addresses = '*'         # what IP address(es) to listen on;
-```
-
-Add the hosts allowed to connect to the database machine to the file **pg_hba.conf**. Where *172.24.99.0/24* is the network of the host allowed to connect to the database.
-
-```sh 
-sudo nano /etc/postgresql/9.5/main/pg_hba.conf
-
-# IPv4 local connections:
-host    all             all             127.0.0.1/32            md5
-host    all             all             172.24.99.0/24          md5
+```sh
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
+cd scripts-despliegue-desacoplado/
+bash 2.db_install.sh
 ```
 
 ## Install Rest API

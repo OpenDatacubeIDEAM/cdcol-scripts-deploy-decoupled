@@ -7,14 +7,23 @@ if [[ $(id -u) -eq 0 ]] ; then
 	exit 1 ; 
 fi
 
-echo "¿Cuál es la ip del servidor NFS?"
-read ipnfs
-
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
 read ipdb
 
 echo "¿Cuál es la ip del API REST?"
 read ipapi
+
+echo "¿Cuál es la ip del servidor NFS?"
+read ipnfs
+
+# echo "¿Cuál es la ip pública de este servidor?"
+# read IP
+# Getting Host IP address and CIDR mask. Ex: 192.168.205.4/24
+IP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}')
+
+# Split address and CIDR mask
+IFS='/' read -r Address MaskCIDR <<< "$IP"
+IP=$Address
 
 sudo sed -i "\$a$ipnfs   nfs" /etc/hosts
 sudo sed -i "\$a$ipdb    db" /etc/hosts
@@ -51,6 +60,7 @@ sudo apt install -y \
 	htop \
 	imagemagick  ffmpeg|| exit 1
 
+
 #CONDA INSTALL
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
@@ -73,12 +83,6 @@ conda install -y jupyter matplotlib scipy
 conda install -y gdal libgdal
 conda install -y psycopg2 hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
 
-# To avoid this error
-# OSError: [Errno 13] Permiso denegado: 
-# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
-sudo chown -R cubo:cubo /home/cubo/.cache
-sudo chown -R cubo:cubo /home/cubo/.conda
-
 cat <<EOF >~/.datacube.conf
 [datacube]
 db_database: datacube
@@ -100,8 +104,6 @@ datacube -v system init
 datacube system check
 
 source $HOME/.bashrc
-
-
 cd $HOME
 
 sudo rabbitmqctl add_user cdcol cdcol
@@ -120,6 +122,7 @@ sudo service rabbitmq-server restart
 cd $HOME
 
 
+# Airflow Install script
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 conda install -y -c conda-forge "airflow==1.10.1"
 pip install "apache-airflow==1.10.2"
@@ -129,14 +132,27 @@ if [[ -z "${AIRFLOW_HOME}" ]]; then
 fi
 
 
+# airflow initdb
+# sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@$db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+# sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
+
+# sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@$api/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+# sed -i "s%result_backend =.*%result_backend = db+postgresql://airflow:$PASSWORD_AIRFLOW@$db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+# sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
+# sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
+
 airflow initdb
 sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@$db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
 
 sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@$api/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%result_backend =.*%result_backend = db+postgresql://airflow:$PASSWORD_AIRFLOW@$db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%endpoint_url = .*%endpoint_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%base_url = .*%base_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%flower_port = .*%flower_port = 8082%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%dags_are_paused_at_creation = .*% = False%" "$AIRFLOW_HOME/airflow.cfg"
 
 #MOUNT NFS SERVER
 cd $HOME
