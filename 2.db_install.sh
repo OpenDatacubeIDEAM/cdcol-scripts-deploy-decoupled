@@ -86,7 +86,7 @@ IFS=. read -r m1 m2 m3 m4 <<< "$Mask"
 Network="$((i1 & m1)).$((i2 & m2)).$((i3 & m3)).$((i4 & m4))"
 
 echo "=> Set listen_addresses = 'localhost' to '*' in '/etc/postgresql/9.5/main/postgresql.conf' "
-sed -i "s/^#listen_addresses = .*/listen_addresses = '*'/g" /etc/postgresql/9.5/main/postgresql.conf
+sudo sed -i "s/^#listen_addresses = .*/listen_addresses = '*'/g" /etc/postgresql/9.5/main/postgresql.conf
 echo "=> Add line 'host    all             all             $Network\/$MaskCIDR          md5' to '/etc/postgresql/9.5/main/pg_hba.conf' "
 sudo sed -i '/host    all             all             ::1\/128                 md5/ a host    all             all             $Network\/$MaskCIDR          md5' /etc/postgresql/9.5/main/pg_hba.conf
 
