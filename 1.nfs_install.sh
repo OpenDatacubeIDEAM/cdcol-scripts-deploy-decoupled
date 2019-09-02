@@ -34,9 +34,9 @@ echo "Network: $Network"
 
 sudo chmod o+w /etc/exports
 cat <<EOF >>/etc/exports
-/dc_storage     		$Network/$MaskCIDR(rw,sync,no_subtree_check)
-/source_storage         $Network/$MaskCIDR(rw,sync,no_subtree_check)
-/web_storage    		$Network/$MaskCIDR(rw,sync,no_subtree_check)
+/dc_storage				$Network/$MaskCIDR(rw,sync,no_subtree_check)
+/source_storage			$Network/$MaskCIDR(rw,sync,no_subtree_check)
+/web_storage			$Network/$MaskCIDR(rw,sync,no_subtree_check)
 
 EOF
 
