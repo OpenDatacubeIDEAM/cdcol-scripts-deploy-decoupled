@@ -16,8 +16,8 @@ echo "=> La direccion IP actual es: $IP"
 
 echo "=> Instalacion de Paquetes ..."
 
-sudo apt-get update
-sudo apt install -y \
+sudo apt-get update -qq -y
+sudo apt install -qq -y \
 	openssh-server \
 	postgresql-9.5 \
 	postgresql-client-9.5 \

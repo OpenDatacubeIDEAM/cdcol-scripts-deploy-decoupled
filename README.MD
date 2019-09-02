@@ -1,6 +1,6 @@
 # Data Cube Instalation Scripts
 
-## Cube User
+## Create the cubo User
 
 Create the cube user in every machine:
 
@@ -11,6 +11,8 @@ Create the cube user in every machine:
 * Airflow Server
 * Airflow Workers
 
+Using the following command:
+
 ```sh 
 sudo adduser cubo
 sudo usermod -aG sudo cubo
@@ -18,26 +20,28 @@ su cubo
 cd
 ```
 
+Install git
+
+```sh 
+sudo apt install git
+```
+
 ## Install NFS
 
-Peform the following script. Replace **web_ip/mask** with the IPAddress and network mask of WebServer, and **WorkersNet/Mask** with the network and mask of the workers.
+Create a RSA key, change "aa.vivas@uniandes.edu.co" with your email, and add the content of the publick key .pub to your ssh keys in Github/Gitlab.
 
 ```sh 
-bash nfs_install.sh web_ip/mask workers_net/mask
+ssh-keygen -t rsa -C aa.vivas@uniandes.edu.co -b 4096
 ```
 
-Example:
+Clone the repository and install the NFS server. This will create */dc_storage*, */web_storage* and */source_storage* shared directories.
+
 
 ```sh 
-bash nfs_install.sh 10.0.0.1/16 192.168.0.0/32
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
+cd scripts-despliegue-desacoplado/
+bash 1.nfs_install.sh
 ```
-
-If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
-
-```sh
-bash nfs_install.sh web_ip/mask workers_net/mask 2>&1 | tee logs.txt
-```
-
 
 ## Install DB
 

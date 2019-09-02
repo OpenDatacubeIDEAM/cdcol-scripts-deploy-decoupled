@@ -6,7 +6,7 @@ if [[ $(id -u) -eq 0 ]] ; then
 	exit 1 ; 
 fi
 
-sudo apt-get update
+sudo apt-get update 
 sudo apt install nfs-kernel-server
 sudo mkdir /dc_storage /source_storage /web_storage
 sudo chown cubo:root /dc_storage /source_storage /web_storage
