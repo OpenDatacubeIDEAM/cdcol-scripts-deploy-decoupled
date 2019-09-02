@@ -1,5 +1,14 @@
 #!/bin/bash
-if [[ $(id -u) -eq 0 ]] ; then echo "This script must  not be excecuted as root or using sudo(althougth the user must be sudoer and password will be asked in some steps)" ; exit 1 ; fi
+
+if [[ $(id -u) -eq 0 ]] ; then 
+	echo "This script must  not be excecuted \
+	as root or using sudo(althougth the user must \
+	be sudoer and password will be asked in some steps)" ; 
+	exit 1 ; 
+fi
+
+echo "¿Cuál es la ip del servidor NFS?"
+read ipnfs
 
 echo "¿Cuál es la ip del servidor de Bases de Datos?"
 read ipdb
@@ -7,8 +16,9 @@ read ipdb
 echo "¿Cuál es la ip del API REST?"
 read ipapi
 
-echo "¿Cuál es la ip del servidor NFS?"
-read ipnfs
+sudo sed -i "\$a$ipnfs   nfs" /etc/hosts
+sudo sed -i "\$a$ipdb    db" /etc/hosts
+sudo sed -i "\$a$ipapi   api" /etc/hosts
 
 sudo apt-get update
 
@@ -20,8 +30,26 @@ ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
 BRANCH="datacube-1.6.1"
 
-sudo apt install -y rabbitmq-server openssh-server postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libgdal1-dev libhdf5-serial-dev libnetcdf-dev hdf5-tools netcdf-bin gdal-bin pgadmin3 libhdf5-doc netcdf-doc libgdal-doc git wget htop imagemagick  ffmpeg|| exit 1
-
+sudo apt install -y \
+	rabbitmq-server \
+	openssh-server \
+	postgresql-9.5 \
+	postgresql-client-9.5 \
+	postgresql-contrib-9.5 \
+	libgdal1-dev \
+	libhdf5-serial-dev \
+	libnetcdf-dev \
+	hdf5-tools \
+	netcdf-bin \
+	gdal-bin \
+	pgadmin3 \
+	libhdf5-doc \
+	netcdf-doc \
+	libgdal-doc \
+	git \
+	wget \
+	htop \
+	imagemagick  ffmpeg|| exit 1
 
 #CONDA INSTALL
 if ! hash "conda" > /dev/null; then
@@ -56,7 +84,7 @@ cat <<EOF >~/.datacube.conf
 db_database: datacube
 
 # A blank host will use a local socket. Specify a hostname to use TCP.
-db_hostname: $ipdb
+db_hostname: db
 
 # Credentials are optional: you might have other Postgres authentication configured.
 # The default username otherwise is the current user id.
@@ -102,11 +130,11 @@ fi
 
 
 airflow initdb
-sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@$ipdb:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@$db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
 
-sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@$ipapi/airflow%" "$AIRFLOW_HOME/airflow.cfg"
-sed -i "s%result_backend =.*%result_backend = db+postgresql://airflow:$PASSWORD_AIRFLOW@$ipdb:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@$api/airflow%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%result_backend =.*%result_backend = db+postgresql://airflow:$PASSWORD_AIRFLOW@$db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
 
@@ -116,9 +144,9 @@ cd $HOME
 sudo apt install -y nfs-common
 sudo chmod o+w /etc/fstab
 cat <<EOF >>/etc/fstab
-$ipnfs:/source_storage	/source_storage nfs 	defaults    	0   	0
-$ipnfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
-$ipnfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
+nfs:/source_storage	/source_storage nfs 	defaults    	0   	0
+nfs:/dc_storage		/dc_storage 	nfs 	defaults    	0   	0
+nfs:/web_storage   	/web_storage	nfs 	defaults    	0   	0
 EOF
 sudo chmod o-w /etc/fstab
 
@@ -140,14 +168,14 @@ pip install -r requirements.txt
 
 sudo cat <<EOF >environment
 # Connection for Web site database
-WEB_DBHOST='$ipdb'
+WEB_DBHOST='db'
 WEB_DBPORT='5432'
 WEB_DBNAME='ideam'
 WEB_DBUSER='portal_web'
 WEB_DBPASSWORD='CDCol_web_2016'
 
 # Connection for Datacube database
-DATACUBE_DBHOST='$ipdb'
+DATACUBE_DBHOST='db'
 DATACUBE_DBPORT='5432'
 DATACUBE_DBNAME='datacube'
 DATACUBE_DBUSER='$(whoami)'
