@@ -121,6 +121,7 @@ sudo service rabbitmq-server restart
 
 cd $HOME
 
+# ===================================== Airflow Install ====================================
 
 # Airflow Install script
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
@@ -173,6 +174,123 @@ sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
 
+mkdir  /web_storage/{dags,plugins,logs}
+
+ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
+ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
+touch /home/cubo/airflow/dags/dummy.py
+cat <<EOF >>/home/cubo/airflow/dags/dummy.py
+import airflow
+from airflow.models import DAG
+from airflow.operators.dummy_operator import DummyOperator
+from datetime import timedelta
+args = {
+    'owner': 'airflow',
+    'start_date': airflow.utils.dates.days_ago(2)
+}
+dag = DAG(
+    dag_id='example_dummy', default_args=args,
+    schedule_interval=None,
+    dagrun_timeout=timedelta(minutes=1))
+run_this_last = DummyOperator(task_id='DOES_NOTHING', dag=dag)
+EOF
+
+
+airflow initdb
+
+#AIRFLOW SERVICE
+
+
+cd $HOME
+source .bashrc
+mkdir env
+cat <<EOF >>/home/cubo/env/airflow
+PATH="$HOME/anaconda/bin:$PATH"
+AIRFLOW_HOME='/home/cubo/airflow'
+SLUGIFY_USES_TEXT_UNIDECODE=yes
+EOF
+
+sudo touch /etc/systemd/system/airflow-webserver.service
+sudo chmod o+w /etc/systemd/system/airflow-webserver.service
+cat <<EOF >/etc/systemd/system/airflow-webserver.service
+[Unit]
+Description=Airflow webserver daemon
+After=network.target
+
+
+[Service]
+EnvironmentFile=/home/cubo/env/airflow
+User=cubo
+Group=cubo
+Type=simple
+ExecStart= /home/cubo/anaconda/bin/python3 /home/cubo/anaconda/bin/airflow webserver
+Restart=on-failure
+RestartSec=5s
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo chmod o-w /etc/systemd/system/airflow-webserver.service
+
+
+sudo touch /etc/systemd/system/airflow-scheduler.service
+sudo chmod o+w /etc/systemd/system/airflow-scheduler.service
+cat <<EOF >/etc/systemd/system/airflow-scheduler.service
+[Unit]
+Description=Airflow scheduler daemon
+After=network.target
+
+
+[Service]
+EnvironmentFile=/home/cubo/env/airflow
+User=cubo
+Group=cubo
+Type=simple
+ExecStart=/home/cubo/anaconda/bin/python3 /home/cubo/anaconda/bin/airflow scheduler
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo chmod o-w /etc/systemd/system/airflow-scheduler.service
+
+sudo touch /etc/systemd/system/flower.service
+sudo chmod o+w /etc/systemd/system/flower.service
+cat <<EOF >/etc/systemd/system/flower.service
+[Unit]
+Description=Airflow flower daemon
+After=network.target
+
+
+[Service]
+EnvironmentFile=/home/cubo/env/airflow
+User=cubo
+Group=cubo
+Type=simple
+ExecStart=/home/cubo/anaconda/bin/python3 /home/cubo/anaconda/bin/airflow flower
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo chmod o-w /etc/systemd/system/flower.service
+
+
+sudo systemctl daemon-reload
+sudo systemctl start airflow-webserver
+sudo systemctl enable airflow-webserver
+
+sudo systemctl start airflow-scheduler
+sudo systemctl enable airflow-scheduler
+
+sudo systemctl start flower
+sudo systemctl enable flower
+
+# ===================================== API Rest Install ====================================
+
 cd $HOME
 
 git clone git@github.com:OpenDatacubeIDEAM/cdcol-cdcol-api-rest.git
@@ -207,7 +325,7 @@ TO_INGEST='/source_storage'
 WEB_THUMBNAILS='/web_storage/thumbnails'
 
 #GIF script
-GEN_GIF_SCRIPT='/home/cubo/cdcol-api-rest/scripts/generate_gif.sh'
+GEN_GIF_SCRIPT='/home/cubo/api-rest/scripts/generate_gif.sh'
  
 #Results path
 RESULTS='/web_storage/results'
@@ -235,8 +353,8 @@ After=network.target
 [Service]
 User=cubo
 Group=cubo
-WorkingDirectory=/home/cubo/cdcol-api-rest
-EnvironmentFile=/home/cubo/cdcol-api-rest/environment
+WorkingDirectory=/home/cubo/api-rest
+EnvironmentFile=/home/cubo/api-rest/environment
 ExecStart=/home/cubo/anaconda/bin/gunicorn --timeout 36000 --bind 0.0.0.0:8000 --error-logfile /home/cubo/gunicorn-error.log cdcol.wsgi:application
  
 [Install]
