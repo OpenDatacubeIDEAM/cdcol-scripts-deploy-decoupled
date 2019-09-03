@@ -55,7 +55,7 @@ if ! hash "conda" > /dev/null; then
 fi
 
 source $HOME/.bashrc
-# conda install -y python=3.6.8
+conda install -y python=3.6.8
 
 
 # To avoid this error
@@ -77,7 +77,7 @@ cd ~/projects/web-app
 # Load web app env variables
 export $(egrep -v '^#' environment | xargs)
 
-pip3.6 install -r requirements.txt
+pip3 install -r requirements.txt
 
 python3.6 manage.py makemigrations
 python3.6 manage.py migrate

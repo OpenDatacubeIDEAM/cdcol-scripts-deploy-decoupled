@@ -11,7 +11,7 @@ Create the cube user in every machine:
 * Airflow Server
 * Airflow Workers
 
-Using the following command:
+Create the **cubo** user sing the following command:
 
 ```sh 
 sudo adduser cubo
@@ -27,6 +27,21 @@ sudo apt install git
 ```
 
 ## Install NFS
+
+Create the **cubo** user sing the following command:
+
+```sh 
+sudo adduser cubo
+sudo usermod -aG sudo cubo
+su cubo
+cd
+```
+
+Install git
+
+```sh 
+sudo apt install git
+```
 
 Create a RSA key, change "aa.vivas@uniandes.edu.co" with your email, and add the content of the publick key .pub to your ssh keys in Github/Gitlab.
 
@@ -50,6 +65,21 @@ This script will
 2. Set the 'datacube' database
 3. Set the 'airflow' database
 4. Install redis
+
+Create the **cubo** user sing the following command:
+
+```sh 
+sudo adduser cubo
+sudo usermod -aG sudo cubo
+su cubo
+cd
+```
+
+Install git
+
+```sh 
+sudo apt install git
+```
 
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
@@ -75,6 +105,21 @@ This script will install:
 2. Airflow Server
 3. [API Rest](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/api-rest)
 
+Create the **cubo** user sing the following command:
+
+```sh 
+sudo adduser cubo
+sudo usermod -aG sudo cubo
+su cubo
+cd
+```
+
+Install git
+
+```sh 
+sudo apt install git
+```
+
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
 ```sh
@@ -92,6 +137,21 @@ bash 3.api_and_airflow_server_install.sh
 ```
 
 ## Install Airflow Worker
+
+Create the **cubo** user sing the following command:
+
+```sh 
+sudo adduser cubo
+sudo usermod -aG sudo cubo
+su cubo
+cd
+```
+
+Install git
+
+```sh 
+sudo apt install git
+```
 
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
@@ -117,6 +177,21 @@ This script will install
 2. [Open Data Cube core](https://github.com/opendatacube/datacube-core.git). 
 3. [Ingestor](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/ingestion-scheduler) cronjob. 
 
+Create the **cubo** user sing the following command:
+
+```sh 
+sudo adduser cubo
+sudo usermod -aG sudo cubo
+su cubo
+cd
+```
+
+Install git
+
+```sh 
+sudo apt install git
+```
+
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
 ```sh
@@ -133,14 +208,36 @@ cp scripts-despliegue-desacoplado/5.ingestion_install.sh .
 bash 5.worker_airflow_install.sh
 ```
 
-If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
 
-```sh
-bash ingestion_install.sh 2>&1 | tee logs.txt
+## Install Web
+
+Create the **cubo** user sing the following command:
+
+```sh 
+sudo adduser cubo
+sudo usermod -aG sudo cubo
+su cubo
+cd
 ```
 
-If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
+Install git
+
+```sh 
+sudo apt install git
+```
+
+Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
 ```sh
-bash api_install.sh db_ip nfs_ip 2>&1 | tee logs.txt
+mkdir ~/.ssh
+scp cubo@172.24.99.217:/home/cubo/.ssh/id_rsa* .ssh/
+sudo chown -R cubo:cubo .ssh
+```
+
+Run the script as follows
+
+```sh 
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
+cp scripts-despliegue-desacoplado/6.web_install.sh .
+bash 6.web_install.sh
 ```
