@@ -1,8 +1,6 @@
 # Data Cube Instalation Scripts
 
-## Create the cubo User
-
-Create the cube user in every machine:
+The following machines will be installed to setting up the opendatacube.
 
 * NFS
 * DB
@@ -10,21 +8,6 @@ Create the cube user in every machine:
 * API
 * Airflow Server
 * Airflow Workers
-
-Create the **cubo** user sing the following command:
-
-```sh 
-sudo adduser cubo
-sudo usermod -aG sudo cubo
-su cubo
-cd
-```
-
-Install git
-
-```sh 
-sudo apt install git
-```
 
 ## Install NFS
 
@@ -208,7 +191,6 @@ cp scripts-despliegue-desacoplado/5.ingestion_install.sh .
 bash 5.worker_airflow_install.sh
 ```
 
-
 ## Install Web
 
 Create the **cubo** user sing the following command:
@@ -240,4 +222,47 @@ Run the script as follows
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
 cp scripts-despliegue-desacoplado/6.web_install.sh .
 bash 6.web_install.sh
+```
+
+### Load Initial Data
+
+Activate the Python environment used by the web-app
+
+```sh 
+source ~/v_ideam/bin/activate
+cd ~/projects/web-app/
+```
+
+Load the environment variables needed for the web-app django project.
+
+```sh 
+# Load web app env variables
+export $(egrep -v '^#' environment | xargs)
+```
+
+Load initial database data
+
+```sh 
+# Loading application initial data
+python3.6 manage.py loaddata data/1.group.json
+python3.6 manage.py loaddata data/2.user.json
+python3.6 manage.py loaddata data/3.profile.json
+python3.6 manage.py loaddata data/4.topic.json
+```
+
+
+### Install Workflows 
+
+The workflows place the supporting utilities developed to support workflow processing in the corresponding place in the */web_storage* folder.
+
+* dags/cdcol_utils: Utilities used in dag development.
+* plugins/cdcol_plugin: Ariflow Operators and Sensors.
+* algorithm/workflows: Repository of mini-algorithms that can be pluged into workflows.
+
+Run the script as follows
+
+```sh 
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
+cp scripts-despliegue-desacoplado/6.web_install.sh .
+bash 7.workflows_install.sh
 ```

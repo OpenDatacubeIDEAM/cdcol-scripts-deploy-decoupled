@@ -44,6 +44,9 @@ sudo apt install \
 #make test
 #sudo make install
 
+WEB_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git"
+WEB_BRANCH="master"
+
 ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 if ! hash "conda" > /dev/null; then
 	mkdir -p ~/instaladores && wget -c -P ~/instaladores $ANACONDA_URL
@@ -71,7 +74,9 @@ cd ~
 virtualenv --python=python3.6 v_ideam
 source ~/v_ideam/bin/activate
 
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git -b newDevelop ~/projects/web-app
+mkdir -p ~/projects/web-app
+
+git clone $WEB_REPOSITORY -b $WEB_BRANCH ~/projects/web-app
 cd ~/projects/web-app
 
 # Load web app env variables
