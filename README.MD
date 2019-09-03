@@ -38,7 +38,7 @@ Clone the repository and install the NFS server. This will create */dc_storage*,
 
 ```sh 
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
-cd scripts-despliegue-desacoplado/
+cp scripts-despliegue-desacoplado/1.nfs_install.sh .
 bash 1.nfs_install.sh
 ```
 
@@ -63,29 +63,33 @@ Run the script as follows:
 
 ```sh
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
-cd scripts-despliegue-desacoplado/
+cp scripts-despliegue-desacoplado/2.db_install.sh .
 bash 2.db_install.sh
 ```
 
-## Install Rest API
+## Install Rest API and Airflow Server
 
 This script will install:
 
-1. [CDCol](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol): modules that use the open datacube API for Colombian's needs.
-2. [OpenDataCube](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/agdc-v2) (ODC) API from Australian Geoscience Data Cube v2.
-3. RabbitMQ: It is an open source multi-protocol messaging broker.
-4. [API Rest](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/api-rest): It exposes some features of the ODC through internet.
+1. RabbitMQ 
+2. Airflow Server
+3. [CDCol](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol)
+4. [API Rest](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/api-rest)
+
+Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
+
+```sh
+mkdir ~/.ssh
+scp cubo@172.24.99.217:/home/cubo/.ssh/id_rsa* .ssh/
+sudo chown -R cubo:cubo .ssh
+```
 
 Run the script as follows, replace
 
-```sh 
-bash api_install.sh 
-```
-
-If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
-
 ```sh
-bash api_install.sh db_ip nfs_ip 2>&1 | tee logs.txt
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
+cp scripts-despliegue-desacoplado/3.api_and_airflow_server_install.sh .
+bash 3.api_and_airflow_server_install.sh
 ```
 
 ## Install Ingestor
@@ -106,4 +110,10 @@ If you need to keep instalation logs use **tee** to save **stdout** and **stderr
 
 ```sh
 bash ingestion_install.sh 2>&1 | tee logs.txt
+```
+
+If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.
+
+```sh
+bash api_install.sh db_ip nfs_ip 2>&1 | tee logs.txt
 ```
