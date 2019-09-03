@@ -117,10 +117,20 @@ This script will install
 2. [Open Data Cube core](https://github.com/opendatacube/datacube-core.git). 
 3. [Ingestor](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/ingestion-scheduler) cronjob. 
 
+Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
+
+```sh
+mkdir ~/.ssh
+scp cubo@172.24.99.217:/home/cubo/.ssh/id_rsa* .ssh/
+sudo chown -R cubo:cubo .ssh
+```
+
 Run the script as follows
 
 ```sh 
-bash ingestion_install.sh
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
+cp scripts-despliegue-desacoplado/5.ingestion_install.sh .
+bash 5.worker_airflow_install.sh
 ```
 
 If you need to keep instalation logs use **tee** to save **stdout** and **stderr**.

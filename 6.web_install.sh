@@ -55,7 +55,7 @@ if ! hash "conda" > /dev/null; then
 fi
 
 source $HOME/.bashrc
-conda install -y python=3.6.8
+# conda install -y python=3.6.8
 
 
 # To avoid this error
