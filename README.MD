@@ -263,6 +263,6 @@ Run the script as follows
 
 ```sh 
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
-cp scripts-despliegue-desacoplado/6.web_install.sh .
+cp scripts-despliegue-desacoplado/7.workflows_install.sh .
 bash 7.workflows_install.sh
 ```
