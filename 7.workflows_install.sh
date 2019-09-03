@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git"
+WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflows.git"
 WORKFLOWS_BRANCH="master"
 
 mkdir -p ~/projects/workflows
