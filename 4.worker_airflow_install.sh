@@ -113,6 +113,8 @@ cd $HOME
 # Airflow Install script
 /home/cubo/anaconda/bin/pip install conda
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
+/home/cubo/anaconda/bin/pip install conda
+conda install -y -c anaconda scikit-learn
 /home/cubo/anaconda/bin/pip install "apache-airflow==1.10.2"
 # conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 # conda install -y -c conda-forge "airflow==1.10.1"
@@ -192,6 +194,3 @@ sudo chmod o-w /etc/systemd/system/airflow-worker.service
 sudo systemctl daemon-reload
 sudo systemctl start airflow-worker
 sudo systemctl enable airflow-worker
-
-
-conda install -y -c anaconda scikit-learn
