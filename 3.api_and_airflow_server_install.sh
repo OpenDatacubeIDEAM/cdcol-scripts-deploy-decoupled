@@ -39,6 +39,9 @@ ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
 BRANCH="datacube-1.6.1"
 
+API_REST_REPOSITORY=" git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git"
+API_REST_BRANCH="master"
+
 sudo apt install -y \
 	rabbitmq-server \
 	openssh-server \
@@ -78,7 +81,7 @@ sudo chown -R cubo:cubo /home/cubo/.cache
 sudo chown -R cubo:cubo /home/cubo/.conda
 
 source $HOME/.bashrc
-conda install -y python=3.6.8
+# conda install -y python=3.6.8
 conda install -y jupyter matplotlib scipy
 conda install -y gdal libgdal
 conda install -y psycopg2 hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
@@ -125,8 +128,11 @@ cd $HOME
 
 # Airflow Install script
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
-conda install -y -c conda-forge "airflow==1.10.1"
-pip install "apache-airflow==1.10.2"
+/home/cubo/anaconda/bin/pip install "apache-airflow==1.10.2"
+
+# conda install -y redis-py flower celery=4.2
+# conda install -y -c conda-forge "airflow==1.10.1"
+
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
     echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
@@ -293,12 +299,12 @@ sudo systemctl enable flower
 
 cd $HOME
 
-git clone git@github.com:OpenDatacubeIDEAM/cdcol-cdcol-api-rest.git
-cd cdcol-api-rest
+mkdir -p api-rest
+git clone $API_REST_REPOSITORY --branch $API_REST_BRANCH api-rest
+cd api-rest
 
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
-pip install -r requirements.txt
-
+/home/cubo/anaconda/bin/pip install -r requirements.txt
 
 sudo cat <<EOF >environment
 # Connection for Web site database
