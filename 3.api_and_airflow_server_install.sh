@@ -127,6 +127,7 @@ cd $HOME
 # ===================================== Airflow Install ====================================
 
 # Airflow Install script
+/home/cubo/anaconda/bin/pip install conda
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 /home/cubo/anaconda/bin/pip install "apache-airflow==1.10.2"
 
@@ -159,7 +160,7 @@ sed -i "s%base_url = .*%base_url = http://$IP:8080%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%flower_port = .*%flower_port = 8082%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
-sed -i "s%dags_are_paused_at_creation = .*% = False%" "$AIRFLOW_HOME/airflow.cfg"
+sed -i "s%dags_are_paused_at_creation = .*%dags_are_paused_at_creation = False%" "$AIRFLOW_HOME/airflow.cfg"
 
 #MOUNT NFS SERVER
 cd $HOME
@@ -302,6 +303,8 @@ cd $HOME
 mkdir -p api-rest
 git clone $API_REST_REPOSITORY --branch $API_REST_BRANCH api-rest
 cd api-rest
+
+source $HOME/.bashrc
 
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 /home/cubo/anaconda/bin/pip install -r requirements.txt
