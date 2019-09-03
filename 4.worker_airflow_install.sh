@@ -73,10 +73,18 @@ if ! hash "conda" > /dev/null; then
 	echo 'export SLUGIFY_USES_TEXT_UNIDECODE=yes'>>$HOME/.bashrc
 fi
 
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado: 
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
+sudo chown -R cubo:cubo /home/cubo/.conda
+
 source $HOME/.bashrc
-conda install -y python=3.6.8
+# conda install -y python=3.6.8
+/home/cubo/anaconda/bin/pip install conda
 conda install -y jupyter matplotlib scipy
-conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+conda install -y gdal libgdal
+conda install -y psycopg2 hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
  
 
 cat <<EOF >~/.datacube.conf
