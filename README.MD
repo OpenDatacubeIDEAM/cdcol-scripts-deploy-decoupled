@@ -73,8 +73,7 @@ This script will install:
 
 1. RabbitMQ 
 2. Airflow Server
-3. [CDCol](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol)
-4. [API Rest](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/api-rest)
+3. [API Rest](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/api-rest)
 
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
@@ -90,6 +89,24 @@ Run the script as follows, replace
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
 cp scripts-despliegue-desacoplado/3.api_and_airflow_server_install.sh .
 bash 3.api_and_airflow_server_install.sh
+```
+
+## Install Airflow Worker
+
+Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
+
+```sh
+mkdir ~/.ssh
+scp cubo@172.24.99.217:/home/cubo/.ssh/id_rsa* .ssh/
+sudo chown -R cubo:cubo .ssh
+```
+
+Run the script as follows, replace
+
+```sh
+git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
+cp scripts-despliegue-desacoplado/4.worker_airflow_install.sh .
+bash 4.worker_airflow_install.sh
 ```
 
 ## Install Ingestor
