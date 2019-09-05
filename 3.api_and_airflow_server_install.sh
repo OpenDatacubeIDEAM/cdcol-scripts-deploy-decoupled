@@ -146,14 +146,14 @@ cd $HOME
 # Airflow Install script
 # conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 # /home/cubo/anaconda/bin/pip install conda
-/home/cubo/anaconda/bin/pip install psycopg2-binary
-/home/cubo/anaconda/bin/pip install redis
-/home/cubo/anaconda/bin/pip install flower
-/home/cubo/anaconda/bin/pip install celery==4.2
-/home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
+# /home/cubo/anaconda/bin/pip install psycopg2-binary
+# /home/cubo/anaconda/bin/pip install redis
+# /home/cubo/anaconda/bin/pip install flower
+# /home/cubo/anaconda/bin/pip install celery==4.2
+# /home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
 
-# conda install -y redis-py flower celery=4.2
-# conda install -y -c conda-forge "airflow==1.10.1"
+conda install -y psycopg2 redis-py flower celery=4.2
+conda install -y -c conda-forge "apache-airflow==1.10.2"
 
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
@@ -214,20 +214,21 @@ dag = DAG(
 run_this_last = DummyOperator(task_id='DOES_NOTHING', dag=dag)
 EOF
 
-# =========================== PLUGINS AND WORKFLOWS ==========================
-mkdir -p ~/workflows
-
-git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
-
-cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
-cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
-
-mkdir -p /web_storage/algorithms
-# mkdir -p /web_storage/media_root/algorithms
-cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
-
-
 airflow initdb
+
+# =========================== PLUGINS AND WORKFLOWS ==========================
+# mkdir -p ~/workflows
+
+# git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
+
+# cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
+# cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
+
+# mkdir -p /web_storage/algorithms
+# # mkdir -p /web_storage/media_root/algorithms
+# cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
+
+
 
 #AIRFLOW SERVICE
 
