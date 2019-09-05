@@ -40,6 +40,18 @@ ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
 BRANCH="datacube-1.6.1"
 
+API_REST_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git"
+API_REST_BRANCH="master"
+
+CLEANER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/cdcol-cleaner.git"
+CLEANER_BRANCH="master"
+
+UPDATER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/execution-monitor.git"
+UPDATER_BRANCH="master"
+
+WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflows.git"
+WORKFLOWS_BRANCH="master"
+
 sudo apt install -y \
 	rabbitmq-server \
 	openssh-server \
@@ -145,7 +157,7 @@ if [[ -z "${AIRFLOW_HOME}" ]]; then
 fi
 
 
-airflow initdb
+# airflow initdb
 sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
 
@@ -197,6 +209,18 @@ dag = DAG(
     dagrun_timeout=timedelta(minutes=1))
 run_this_last = DummyOperator(task_id='DOES_NOTHING', dag=dag)
 EOF
+
+# =========================== PLUGINS AND WORKFLOWS ==========================
+mkdir -p ~/workflows
+
+git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
+
+cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
+cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
+
+mkdir -p /web_storage/algorithms
+# mkdir -p /web_storage/media_root/algorithms
+cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
 
 
 airflow initdb
