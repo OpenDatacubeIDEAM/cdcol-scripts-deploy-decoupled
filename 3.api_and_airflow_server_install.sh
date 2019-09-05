@@ -92,8 +92,8 @@ source $HOME/.bashrc
 sudo chown -R cubo:cubo /home/cubo/.cache
 sudo chown -R cubo:cubo /home/cubo/.conda
 
-conda install -y python=3.6.8
-/home/cubo/anaconda/bin/pip install conda
+# conda install -y python=3.6.8
+# /home/cubo/anaconda/bin/pip install conda
 
 conda install -y jupyter matplotlib scipy
 conda install -y gdal libgdal
@@ -144,9 +144,13 @@ cd $HOME
 # ===================================== Airflow Install ====================================
 
 # Airflow Install script
-conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
-/home/cubo/anaconda/bin/pip install conda
-/home/cubo/anaconda/bin/pip install "apache-airflow==1.10.2"
+# conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
+# /home/cubo/anaconda/bin/pip install conda
+/home/cubo/anaconda/bin/pip install psycopg2-binary
+/home/cubo/anaconda/bin/pip install redis
+/home/cubo/anaconda/bin/pip install flower
+/home/cubo/anaconda/bin/pip install celery==4.2
+/home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
 
 # conda install -y redis-py flower celery=4.2
 # conda install -y -c conda-forge "airflow==1.10.1"
@@ -189,7 +193,7 @@ sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
 
-mkdir  /web_storage/{dags,plugins,logs}
+mkdir -p /web_storage/{dags,plugins,logs}
 
 ln -s /web_storage/dags "$AIRFLOW_HOME/dags"
 ln -s /web_storage/plugins "$AIRFLOW_HOME/plugins"
