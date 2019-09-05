@@ -266,3 +266,9 @@ git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-d
 cp scripts-despliegue-desacoplado/7.workflows_install.sh .
 bash 7.workflows_install.sh
 ```
+
+## Todo 
+
+Add sudo systemctl daemon-reload 
+sudo systemctl restart airflow-webserver.service
+sudo systemct restart airflow-scheduler.service

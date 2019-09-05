@@ -36,11 +36,9 @@ PASSWORD_AIRFLOW='cubocubo'
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
+
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
 BRANCH="datacube-1.6.1"
-
-API_REST_REPOSITORY=" git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git"
-API_REST_BRANCH="master"
 
 sudo apt install -y \
 	rabbitmq-server \
@@ -74,17 +72,25 @@ if ! hash "conda" > /dev/null; then
 	echo 'export SLUGIFY_USES_TEXT_UNIDECODE=yes'>>$HOME/.bashrc
 fi
 
+source $HOME/.bashrc
+
 # To avoid this error
 # OSError: [Errno 13] Permiso denegado: 
 # '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
 sudo chown -R cubo:cubo /home/cubo/.cache
 sudo chown -R cubo:cubo /home/cubo/.conda
 
-source $HOME/.bashrc
-# conda install -y python=3.6.8
+conda install -y python=3.6.8
+/home/cubo/anaconda/bin/pip install conda
+
 conda install -y jupyter matplotlib scipy
 conda install -y gdal libgdal
-conda install -y psycopg2 hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+conda install -y \
+	psycopg2 hdf5 \
+	rasterio netcdf4 \
+	libnetcdf pandas \
+	shapely ipywidgets \
+	scipy numpy
 
 cat <<EOF >~/.datacube.conf
 [datacube]
@@ -106,7 +112,6 @@ python setup.py install
 datacube -v system init
 datacube system check
 
-source $HOME/.bashrc
 cd $HOME
 
 sudo rabbitmqctl add_user cdcol cdcol
@@ -127,8 +132,8 @@ cd $HOME
 # ===================================== Airflow Install ====================================
 
 # Airflow Install script
-/home/cubo/anaconda/bin/pip install conda
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
+/home/cubo/anaconda/bin/pip install conda
 /home/cubo/anaconda/bin/pip install "apache-airflow==1.10.2"
 
 # conda install -y redis-py flower celery=4.2
@@ -139,15 +144,6 @@ if [[ -z "${AIRFLOW_HOME}" ]]; then
     echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
 fi
 
-
-# airflow initdb
-# sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@$db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
-# sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
-
-# sed -i "s%broker_url =.*%broker_url = amqp://airflow:airflow@$api/airflow%" "$AIRFLOW_HOME/airflow.cfg"
-# sed -i "s%result_backend =.*%result_backend = db+postgresql://airflow:$PASSWORD_AIRFLOW@$db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
-# sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
-# sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
 
 airflow initdb
 sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
