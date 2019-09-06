@@ -154,8 +154,11 @@ cd $HOME
 # /home/cubo/anaconda/bin/pip install celery==4.2
 # /home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
 
-conda install -y psycopg2 redis-py flower celery=4.2
-/home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
+# conda install -y psycopg2 redis-py flower celery=4.2
+/home/cubo/anaconda/bin/python3.6 -m pip install redis
+/home/cubo/anaconda/bin/python3.6 -m pip install flower
+/home/cubo/anaconda/bin/python3.6 -m pip install celery==4.2
+/home/cubo/anaconda/bin/python3.6 -m pip install apache-airflow==1.10.2
 
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
@@ -219,15 +222,15 @@ EOF
 airflow initdb
 
 # =========================== PLUGINS AND WORKFLOWS ==========================
-mkdir -p ~/workflows
+# mkdir -p ~/workflows
 
-git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
+# git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
 
-cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
-cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
+# cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
+# cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
 
-mkdir -p /web_storage/algorithms
-cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
+# mkdir -p /web_storage/algorithms
+# cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
 
 
 
@@ -333,8 +336,8 @@ cd api-rest
 source $HOME/.bashrc
 
 # conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
-/home/cubo/anaconda/bin/pip install gunicorn djangorestframework psycopg2 PyYAML simplejson
-/home/cubo/anaconda/bin/pip install -r requirements.txt
+/home/cubo/anaconda/bin/python3.6 -m pip install gunicorn djangorestframework psycopg2 PyYAML simplejson
+/home/cubo/anaconda/bin/python3.6 -m pip install -r requirements.txt
 
 sudo cat <<EOF >environment
 # Connection for Web site database
