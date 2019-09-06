@@ -231,16 +231,15 @@ EOF
 airflow initdb
 
 # =========================== PLUGINS AND WORKFLOWS ==========================
-# mkdir -p ~/workflows
+mkdir -p ~/workflows
 
-# git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
+git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
 
-# cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
-# cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
+cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
+cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
 
-# mkdir -p /web_storage/algorithms
-# # mkdir -p /web_storage/media_root/algorithms
-# cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
+mkdir -p /web_storage/algorithms
+cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
 
 
 
