@@ -53,6 +53,7 @@ WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflow
 WORKFLOWS_BRANCH="master"
 
 sudo apt install -y \
+	build-essential \
 	rabbitmq-server \
 	openssh-server \
 	postgresql-9.5 \
@@ -94,6 +95,19 @@ sudo chown -R cubo:cubo /home/cubo/.conda
 
 # conda install -y python=3.6.8
 # /home/cubo/anaconda/bin/pip install conda
+
+# Compile and Install Python 3.6.8
+# This installs 
+# * pip3.6
+# * python3.6
+export PYTHONHTTPSVERIFY=0
+wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tar.xz
+tar xf Python-3.6.8.tar.xz
+cd Python-3.6.8
+./configure
+make
+make test
+sudo make install
 
 conda install -y jupyter matplotlib scipy
 conda install -y gdal libgdal
