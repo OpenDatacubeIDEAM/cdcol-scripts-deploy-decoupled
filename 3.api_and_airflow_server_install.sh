@@ -29,8 +29,6 @@ sudo sed -i "\$a$ipnfs   nfs" /etc/hosts
 sudo sed -i "\$a$ipdb    db" /etc/hosts
 sudo sed -i "\$a$ipapi   api" /etc/hosts
 
-sudo apt-get update
-
 #VARIABLES
 PASSWORD_AIRFLOW='cubocubo'
 USUARIO_CUBO="$(whoami)"
@@ -52,8 +50,11 @@ UPDATER_BRANCH="master"
 WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflows.git"
 WORKFLOWS_BRANCH="master"
 
+sudo add-apt-repository ppa:jonathonf/python-3.6
+sudo apt-get update
+
 sudo apt install -y \
-	build-essential \
+	python3.6 \
 	rabbitmq-server \
 	openssh-server \
 	postgresql-9.5 \
@@ -95,19 +96,6 @@ sudo chown -R cubo:cubo /home/cubo/.conda
 
 # conda install -y python=3.6.8
 # /home/cubo/anaconda/bin/pip install conda
-
-# Compile and Install Python 3.6.8
-# This installs 
-# * pip3.6
-# * python3.6
-export PYTHONHTTPSVERIFY=0
-wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tar.xz
-tar xf Python-3.6.8.tar.xz
-cd Python-3.6.8
-./configure
-make
-make test
-sudo make install
 
 conda install -y jupyter matplotlib scipy
 conda install -y gdal libgdal
