@@ -1,13 +1,6 @@
 # Data Cube Instalation Scripts
 
-The following machines will be installed to setting up the opendatacube.
-
-* NFS
-* DB
-* WEB
-* API
-* Airflow Server
-* Airflow Workers
+The repository contains instalation scripts for: NFS, DB, WEB, API, Airflow Server, Airflow Workers.
 
 ## Install NFS
 
@@ -32,7 +25,7 @@ Create a RSA key, change "aa.vivas@uniandes.edu.co" with your email, and add the
 ssh-keygen -t rsa -C aa.vivas@uniandes.edu.co -b 4096
 ```
 
-Clone the repository and install the NFS server. This will create */dc_storage*, */web_storage* and */source_storage* shared directories.
+Clone the repository and install the NFS server.
 
 ```sh 
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
@@ -267,8 +260,16 @@ cp scripts-despliegue-desacoplado/7.workflows_install.sh .
 bash 7.workflows_install.sh
 ```
 
-## Todo 
+## Known Issues
 
-Add sudo systemctl daemon-reload 
-sudo systemctl restart airflow-webserver.service
-sudo systemct restart airflow-scheduler.service
+With Anaconda 
+
+* [Installing from conda-forge breaks conda's installation](https://github.com/conda-forge/conda-forge.github.io/issues/547)
+
+* [conda v4.5.0](https://github.com/conda-forge/conda-feedstock/pull/42)
+* [Everything is broken: upgrade conda to version 4.4+ #43](https://github.com/conda-forge/conda-feedstock/issues/43#comment-375152359)
+
+Posible solutions
+
+* [resetting conda channel priorities](https://stackoverflow.com/questions/48547046/resetting-conda-channel-priorities)
+* [should_bypass_proxies still an issue in 4.5.7 #7524](https://github.com/conda/conda/issues/7524)

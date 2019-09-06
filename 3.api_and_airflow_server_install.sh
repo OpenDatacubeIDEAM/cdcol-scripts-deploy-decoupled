@@ -153,7 +153,7 @@ cd $HOME
 # /home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
 
 conda install -y psycopg2 redis-py flower celery=4.2
-conda install -y -c conda-forge "apache-airflow==1.10.2"
+/home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
 
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
@@ -331,7 +331,8 @@ cd api-rest
 
 source $HOME/.bashrc
 
-conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
+# conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
+/home/cubo/anaconda/bin/pip install gunicorn djangorestframework psycopg2 PyYAML simplejson
 /home/cubo/anaconda/bin/pip install -r requirements.txt
 
 sudo cat <<EOF >environment
