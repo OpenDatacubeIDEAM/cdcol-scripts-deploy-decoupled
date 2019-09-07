@@ -50,7 +50,6 @@ CLEANER_BRANCH="master"
 UPDATER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/execution-monitor.git"
 UPDATER_BRANCH="master"
 
-sudo add-apt-repository ppa:jonathonf/python-3.6
 sudo apt-get update
 
 sudo apt install -y \
@@ -109,6 +108,9 @@ conda install -y \
 	libnetcdf pandas \
 	shapely ipywidgets \
 	scipy numpy
+
+# downgrade sqlalchemy required for datacube 1.6.1
+pip install sqlalchemy==1.1.18
 
 cat <<EOF >~/.datacube.conf
 [datacube]
