@@ -41,14 +41,14 @@ BRANCH="datacube-1.6.1"
 API_REST_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git"
 API_REST_BRANCH="master"
 
+WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflows.git"
+WORKFLOWS_BRANCH="master"
+
 CLEANER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/cdcol-cleaner.git"
 CLEANER_BRANCH="master"
 
 UPDATER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/execution-monitor.git"
 UPDATER_BRANCH="master"
-
-WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflows.git"
-WORKFLOWS_BRANCH="master"
 
 sudo add-apt-repository ppa:jonathonf/python-3.6
 sudo apt-get update
@@ -94,8 +94,12 @@ source $HOME/.bashrc
 sudo chown -R cubo:cubo /home/cubo/.cache
 sudo chown -R cubo:cubo /home/cubo/.conda
 
-# conda install -y python=3.6.8
-# /home/cubo/anaconda/bin/pip install conda
+# The version conda=4.6.14 is mandatory
+# Other versions will fail
+conda install -y python=3.6.8 conda=4.6.14
+
+
+# ===================================== DATACUBE  ====================================
 
 conda install -y jupyter matplotlib scipy
 conda install -y gdal libgdal
@@ -128,6 +132,9 @@ datacube system check
 
 cd $HOME
 
+# ===================================== RABBITMQ ====================================
+
+
 sudo rabbitmqctl add_user cdcol cdcol
 sudo rabbitmqctl add_vhost cdcol
 sudo rabbitmqctl set_user_tags cdcol cdcol_tag
@@ -143,28 +150,16 @@ sudo service rabbitmq-server restart
 
 cd $HOME
 
-# ===================================== Airflow Install ====================================
+# ===================================== AIRFLOW  ====================================
 
 # Airflow Install script
-# conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
-# /home/cubo/anaconda/bin/pip install conda
-# /home/cubo/anaconda/bin/pip install psycopg2-binary
-# /home/cubo/anaconda/bin/pip install redis
-# /home/cubo/anaconda/bin/pip install flower
-# /home/cubo/anaconda/bin/pip install celery==4.2
-# /home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
-
-# conda install -y psycopg2 redis-py flower celery=4.2
-/home/cubo/anaconda/bin/python3.6 -m pip install redis
-/home/cubo/anaconda/bin/python3.6 -m pip install flower
-/home/cubo/anaconda/bin/python3.6 -m pip install celery==4.2
-/home/cubo/anaconda/bin/python3.6 -m pip install apache-airflow==1.10.2
+conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
+/home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
 
 if [[ -z "${AIRFLOW_HOME}" ]]; then
     export AIRFLOW_HOME="$HOME/airflow"
     echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
 fi
-
 
 # airflow initdb
 sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
@@ -179,7 +174,8 @@ sed -i "s%load_examples = .*%load_examples = False%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%base_log_folder = .*%base_log_folder = /web_storage/logs%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%dags_are_paused_at_creation = .*%dags_are_paused_at_creation = False%" "$AIRFLOW_HOME/airflow.cfg"
 
-#MOUNT NFS SERVER
+# ===================================== NFS SERVER  ====================================
+
 cd $HOME
 
 sudo apt install -y nfs-common
@@ -222,19 +218,29 @@ EOF
 airflow initdb
 
 # =========================== PLUGINS AND WORKFLOWS ==========================
-# mkdir -p ~/workflows
+mkdir -p ~/workflows
 
-# git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
+git clone $WORKFLOWS_REPOSITORY -b $WORKFLOWS_BRANCH ~/workflows
 
-# cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
-# cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
+cp -r ~/workflows/dags/cdcol_utils "$AIRFLOW_HOME/dags"
+cp -r ~/workflows/plugins/cdcol_plugin "$AIRFLOW_HOME/plugins"
 
-# mkdir -p /web_storage/algorithms
-# cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
+mkdir -p /web_storage/algorithms
+cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
+
+# =========================== CLEANER AND UPDATER DAGS ========================
+mkdir -p ~/cdcol-cleaner
+git clone $CLEANER_REPOSITORY -b $CLEANER_BRANCH ~/cdcol-cleaner
+cp -R ~/cdcol-cleaner/cdcol_claner /web_storage/algorithms/
+cp ~/cdcol-cleaner/cdcol_cleaner_dag.py /web_storage/dags/
 
 
+mkdir -p ~/cdcol-updater
+git clone $UPDATER_REPOSITORY -b $UPDATER_BRANCH ~/cdcol-updater
+cp -R ~/cdcol-updater/cdcol_updater /web_storage/algorithms/
+cp ~/cdcol-updater/cdcol_updater_dag.py /web_storage/dags/
 
-#AIRFLOW SERVICE
+# ============================= ARIFLOW SERVICES  ==============================
 
 
 cd $HOME
@@ -335,9 +341,8 @@ cd api-rest
 
 source $HOME/.bashrc
 
-# conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
-/home/cubo/anaconda/bin/python3.6 -m pip install gunicorn djangorestframework psycopg2 PyYAML simplejson
-/home/cubo/anaconda/bin/python3.6 -m pip install -r requirements.txt
+conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
+/home/cubo/anaconda/bin/pip install -r requirements.txt
 
 sudo cat <<EOF >environment
 # Connection for Web site database
