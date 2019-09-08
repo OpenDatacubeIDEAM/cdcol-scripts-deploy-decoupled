@@ -237,7 +237,7 @@ cp -r ~/workflows/algorithms/workflows /web_storage/algorithms/
 # =========================== CLEANER AND UPDATER DAGS ========================
 mkdir -p ~/cdcol-cleaner
 git clone $CLEANER_REPOSITORY -b $CLEANER_BRANCH ~/cdcol-cleaner
-cp -R ~/cdcol-cleaner/cdcol_claner /web_storage/algorithms/
+cp -R ~/cdcol-cleaner/cdcol_cleaner /web_storage/algorithms/
 cp ~/cdcol-cleaner/cdcol_cleaner_dag.py /web_storage/dags/
 
 
