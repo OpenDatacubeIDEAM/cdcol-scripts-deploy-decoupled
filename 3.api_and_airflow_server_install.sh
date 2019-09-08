@@ -337,6 +337,11 @@ sudo systemctl enable airflow-scheduler
 sudo systemctl start flower
 sudo systemctl enable flower
 
+sudo systemctl daemon-reload 
+sudo systemctl restart airflow-webserver.service 
+sudo systemctl restart airflow-scheduler.service 
+
+
 # ===================================== API Rest Install ====================================
 
 cd $HOME
@@ -417,3 +422,4 @@ sudo systemctl stop gunicorn
 sudo systemctl daemon-reload
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
+
