@@ -155,6 +155,7 @@ cd $HOME
 # ===================================== AIRFLOW  ====================================
 
 # Airflow Install script
+conda install -y conda=4.6.14
 conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 /home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
 
@@ -163,7 +164,10 @@ if [[ -z "${AIRFLOW_HOME}" ]]; then
     echo "export AIRFLOW_HOME='$HOME/airflow'" >>"$HOME/.bashrc"
 fi
 
-# airflow initdb
+# This commmand will initialize the database and 
+# create the airflow.cfg file
+airflow initdb
+
 sed -i "s%sql_alchemy_conn.*%sql_alchemy_conn = postgresql+psycopg2://airflow:$PASSWORD_AIRFLOW@db:5432/airflow%" "$AIRFLOW_HOME/airflow.cfg"
 sed -i "s%executor =.*%executor = CeleryExecutor%" "$AIRFLOW_HOME/airflow.cfg"
 
@@ -343,6 +347,7 @@ cd api-rest
 
 source $HOME/.bashrc
 
+conda install -y conda=4.6.14
 conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
 /home/cubo/anaconda/bin/pip install -r requirements.txt
 
