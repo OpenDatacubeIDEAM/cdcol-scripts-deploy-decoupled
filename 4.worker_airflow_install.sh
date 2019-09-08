@@ -80,11 +80,13 @@ sudo chown -R cubo:cubo /home/cubo/.cache
 sudo chown -R cubo:cubo /home/cubo/.conda
 
 source $HOME/.bashrc
-# conda install -y python=3.6.8
-/home/cubo/anaconda/bin/pip install conda
-conda install -y jupyter matplotlib scipy
-conda install -y gdal libgdal
-conda install -y psycopg2 hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+conda install -y python=3.6.8 conda=4.6.14
+conda install -y \
+	jupyter matplotlib scipy \
+	gdal libgdal psycopg2 \
+	hdf5 rasterio netcdf4 \
+	libnetcdf pandas shapely \
+	ipywidgets scipy numpy conda=4.6.14
  
 
 cat <<EOF >~/.datacube.conf
@@ -111,10 +113,8 @@ source $HOME/.bashrc
 cd $HOME
 
 # Airflow Install script
-/home/cubo/anaconda/bin/pip install conda
-conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
-/home/cubo/anaconda/bin/pip install conda
-conda install -y -c anaconda scikit-learn
+conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2 conda=4.6.14
+conda install -y -c anaconda scikit-learn conda=4.6.14
 /home/cubo/anaconda/bin/pip install "apache-airflow==1.10.2"
 # conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
 # conda install -y -c conda-forge "airflow==1.10.1"
@@ -184,7 +184,7 @@ EnvironmentFile=/home/cubo/env/airflow
 User=cubo
 Group=cubo
 Type=simple
-ExecStart=/home/cubo/anaconda/bin/python3 /home/cubo/anaconda/bin/airflow worker --concurrency 1 --queues airflow_small
+ExecStart=/home/cubo/anaconda/bin/python3 /home/cubo/anaconda/bin/airflow worker --concurrency 1 --queues util,airflow_small,airflow_medium,airflow_large,airflow_xlarge
 
 
 [Install]
