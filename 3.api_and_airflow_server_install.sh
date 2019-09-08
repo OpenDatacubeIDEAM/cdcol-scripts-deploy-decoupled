@@ -100,14 +100,14 @@ conda install -y python=3.6.8 conda=4.6.14
 
 # ===================================== DATACUBE  ====================================
 
-conda install -y jupyter matplotlib scipy
-conda install -y gdal libgdal
 conda install -y \
+	jupyter matplotlib scipy \
+	gdal libgdal \
 	psycopg2 hdf5 \
 	rasterio netcdf4 \
 	libnetcdf pandas \
 	shapely ipywidgets \
-	scipy numpy
+	scipy numpy conda=4.6.14
 
 # downgrade sqlalchemy required for datacube 1.6.1
 pip install sqlalchemy==1.1.18
@@ -155,8 +155,8 @@ cd $HOME
 # ===================================== AIRFLOW  ====================================
 
 # Airflow Install script
-conda install -y conda=4.6.14
-conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2
+#conda install -y conda=4.6.14
+conda install -y -c conda-forge psycopg2 redis-py flower celery=4.2 conda=4.6.14
 /home/cubo/anaconda/bin/pip install apache-airflow==1.10.2
 
 if [[ -z "${AIRFLOW_HOME}" ]]; then
@@ -347,8 +347,8 @@ cd api-rest
 
 source $HOME/.bashrc
 
-conda install -y conda=4.6.14
-conda install -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson
+#conda install -y conda=4.6.14
+conda install -y -c conda-forge gunicorn djangorestframework psycopg2 PyYAML simplejson conda=4.6.14
 /home/cubo/anaconda/bin/pip install -r requirements.txt
 
 sudo cat <<EOF >environment
