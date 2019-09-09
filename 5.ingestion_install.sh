@@ -12,6 +12,13 @@ sudo sed -i "\$a$ipdb    db" /etc/hosts
 
 sudo apt-get update
 
+INGESTIOR_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git"
+INGESTIOR_BRANCH="master"
+
+CDCOL_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git"
+CDCOL_BRANCH="master"
+
+
 USUARIO_CUBO="$(whoami)"
 PASSWORD_CUBO='ASDFADFASSDFA'
 ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
@@ -22,9 +29,6 @@ while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
    echo "Waiting while other process ends installs (dpkg/lock is locked)"
    sleep 1
 done
-
-# git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git --branch desacoplado
-# mv CDCol/* ~/
 
 sudo apt install -y \
 	openssh-server \
@@ -56,11 +60,19 @@ if ! hash "conda" > /dev/null; then
 fi
 
 source $HOME/.bashrc
-# conda install -y python=3.6.8
-conda install -y jupyter matplotlib scipy
-conda install -y psycopg2 gdal libgdal hdf5 rasterio netcdf4 libnetcdf pandas shapely ipywidgets scipy numpy
+conda install -y python=3.6.8 conda=4.6.14
 
+# ========================== DATACUBE =================================
 
+conda install -y \
+	jupyter matplotlib scipy \
+	psycopg2 gdal libgdal hdf5 \
+	rasterio netcdf4 libnetcdf \
+	pandas shapely ipywidgets \
+	scipy numpy conda=4.6.14
+
+# downgrade sqlalchemy required for datacube 1.6.1
+pip install sqlalchemy==1.1.18
 
 cat <<EOF >~/.datacube.conf
 [datacube]
@@ -83,6 +95,12 @@ datacube -v system init
 datacube system check
 
 source $HOME/.bashrc
+
+# ======================= MANUAL INGESTION SCRIPT  =============================
+
+mkdir -p ~/CDCol
+git clone $CDCOL_REPOSITORY --branch $CDCOL_BRANCH ~/CDCol
+cp -r ~/CDCol/configIngester ~/
 
 
 sudo groupadd ingesters
@@ -117,12 +135,15 @@ sudo mount /dc_storage
 sudo mount /source_storage
 sudo mount /web_storage
 
-#Configuracion del CRON de ingesta
-/home/cubo/anaconda/bin/pip install conda
-conda install -c conda-forge psycopg2 PyYAML
+# ======================= INGESTION SCEHDULER  =============================
 
-git clone  git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git --branch open_data_cube
-cd ingestion-scheduler
+#Configuracion del CRON de ingesta
+conda install -c conda-forge psycopg2 PyYAML conda=4.6.14
+
+mkdir -p ~/ingestion-scheduler
+git clone $INGESTIOR_REPOSITORY --branch $INGESTIOR_BRANCH ~/ingestion-scheduler
+cd ~/ingestion-scheduler
+
 cat <<EOF >settings.conf
 [database]
 host = db
