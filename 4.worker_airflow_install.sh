@@ -87,7 +87,9 @@ conda install -y \
 	hdf5 rasterio netcdf4 \
 	libnetcdf pandas shapely \
 	ipywidgets scipy numpy conda=4.6.14
- 
+
+# downgrade sqlalchemy required for datacube 1.6.1
+pip install sqlalchemy==1.1.18 
 
 cat <<EOF >~/.datacube.conf
 [datacube]
