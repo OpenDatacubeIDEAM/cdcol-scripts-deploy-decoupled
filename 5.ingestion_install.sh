@@ -144,7 +144,7 @@ sudo mount /web_storage
 # ======================= INGESTION SCEHDULER  =============================
 
 #Configuracion del CRON de ingesta
-conda install -c conda-forge psycopg2 PyYAML conda=4.6.14
+conda install -y -c conda-forge psycopg2 PyYAML conda=4.6.14
 
 mkdir -p ~/ingestion-scheduler
 git clone $INGESTIOR_REPOSITORY --branch $INGESTIOR_BRANCH ~/ingestion-scheduler
@@ -171,6 +171,6 @@ thumb_y_res = 500
 thumb_colors = /home/cubo/util/colores/cb_greys.png
 EOF
 sudo chmod 764 ~/ingestion-scheduler/scripts/generate_thumbnails.sh
+
+sudo sed -i "\$acubo" /etc/cron.allow
 (crontab -l 2>/dev/null; echo "0   0   *   *   *	/home/cubo/ingestion-scheduler/run.sh >> /home/cubo/ingestion-scheduler/out.log 2>> /home/cubo/ingestion-scheduler/err.log") | crontab -
-
-
