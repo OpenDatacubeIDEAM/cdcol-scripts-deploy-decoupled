@@ -12,10 +12,17 @@ sudo sed -i "\$a$ipdb    db" /etc/hosts
 
 sudo apt-get update
 
-INGESTIOR_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git"
+
+# INGESTIOR_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/ingestion-scheduler.git"
+# INGESTIOR_BRANCH="master"
+
+# CDCOL_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git"
+# CDCOL_BRANCH="master"
+
+INGESTIOR_REPOSITORY="git@github.com:OpenDatacubeIDEAM/cdcol-ingestion-scheduler.git"
 INGESTIOR_BRANCH="master"
 
-CDCOL_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git"
+CDCOL_REPOSITORY="git@github.com:OpenDatacubeIDEAM/cdcol.git"
 CDCOL_BRANCH="master"
 
 

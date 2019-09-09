@@ -28,7 +28,10 @@ sudo apt install \
   libssl-dev \
   virtualenv
 
-WEB_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git"
+# WEB_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git"
+# WEB_BRANCH="master"
+
+WEB_REPOSITORY="git@github.com:OpenDatacubeIDEAM/cdcol-web.git"
 WEB_BRANCH="master"
 
 ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"

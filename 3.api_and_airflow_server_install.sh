@@ -38,17 +38,30 @@ ANACONDA_URL="https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh"
 OPEN_DATA_CUBE_REPOSITORY="https://github.com/opendatacube/datacube-core.git"
 BRANCH="datacube-1.6.1"
 
-API_REST_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git"
+# API_REST_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/api-rest.git"
+# API_REST_BRANCH="master"
+
+# WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflows.git"
+# WORKFLOWS_BRANCH="master"
+
+# CLEANER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/cdcol-cleaner.git"
+# CLEANER_BRANCH="master"
+
+# UPDATER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/execution-monitor.git"
+# UPDATER_BRANCH="master"
+
+API_REST_REPOSITORY="git@github.com:OpenDatacubeIDEAM/cdcol-api-rest.git"
 API_REST_BRANCH="master"
 
-WORKFLOWS_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/workflows.git"
+WORKFLOWS_REPOSITORY="git@github.com:OpenDatacubeIDEAM/cdcol-workflows.git"
 WORKFLOWS_BRANCH="master"
 
-CLEANER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/cdcol-cleaner.git"
+CLEANER_REPOSITORY="git@github.com:OpenDatacubeIDEAM/cdcol-cleaner.git"
 CLEANER_BRANCH="master"
 
-UPDATER_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/execution-monitor.git"
+UPDATER_REPOSITORY="git@github.com:OpenDatacubeIDEAM/cdcol-execution-monitor.git"
 UPDATER_BRANCH="master"
+
 
 sudo apt-get update
 
