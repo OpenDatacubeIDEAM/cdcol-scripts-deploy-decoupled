@@ -69,7 +69,7 @@ pip3 install -r requirements.txt
 
 python3.6 manage.py makemigrations
 python3.6 manage.py migrate
-python3.6 manage.py collectstatic
+python3.6 manage.py collectstatic --no-input
 
 # Loading application initial data
 #python3.6 manage.py loaddata data/1.group.json
