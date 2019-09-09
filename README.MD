@@ -1,12 +1,8 @@
 # Data Cube Instalation Scripts
 
-The repository contains instalation scripts for: NFS, DB, WEB, API, Airflow Server, Airflow Workers.
+The repository contains instalation scripts for: NFS, DB, WEB, API, Airflow Server, Airflow Workers. To use this instalation scripts you need to create a **cubo** user in every machine before use the scripts.
 
-## Install NFS
-
-The NFS instalation script will settup /web_storage, /dc_storage and /source_storage share directories.
-
-Create the **cubo** user sing the following command:
+Create the **cubo** user using the following command:
 
 ```sh 
 sudo adduser cubo
@@ -21,7 +17,9 @@ Install git
 sudo apt install git
 ```
 
-Create a RSA key, change "aa.vivas@uniandes.edu.co" with your email, and add the content of the publick key .pub to your ssh keys in Github/Gitlab.
+## Install NFS
+
+The NFS instalation script will settup /web_storage, /dc_storage and /source_storage share directories. Create a RSA key, change "aa.vivas@uniandes.edu.co" with your email, and add the content of the publick key .pub to your ssh keys in Github/Gitlab.
 
 ```sh 
 ssh-keygen -t rsa -C aa.vivas@uniandes.edu.co -b 4096
@@ -40,24 +38,8 @@ bash 1.nfs_install.sh
 This script will
 
 1. Install Postgres Database Manager System
-2. Set the 'datacube' database
-3. Set the 'airflow' database
-4. Install redis
-
-Create the **cubo** user sing the following command:
-
-```sh 
-sudo adduser cubo
-sudo usermod -aG sudo cubo
-su cubo
-cd
-```
-
-Install git
-
-```sh 
-sudo apt install git
-```
+2. Setup the 'datacube' and 'airflow' databases
+3. Install redis
 
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
@@ -82,21 +64,11 @@ This script will install:
 1. RabbitMQ 
 2. Airflow Server
 3. [API Rest](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/api-rest)
-
-Create the **cubo** user sing the following command:
-
-```sh 
-sudo adduser cubo
-sudo usermod -aG sudo cubo
-su cubo
-cd
-```
-
-Install git
-
-```sh 
-sudo apt install git
-```
+4. cdcol_plugins
+5. cdcol_utils
+6. algorithms/workflows (mini algorithms)
+7. cdcol_cleaner_dag
+8. cdcol_updaer_dag
 
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
@@ -106,7 +78,7 @@ scp cubo@172.24.99.217:/home/cubo/.ssh/id_rsa* .ssh/
 sudo chown -R cubo:cubo .ssh
 ```
 
-Run the script as follows, replace
+Run the script as follows:
 
 ```sh
 git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
@@ -116,20 +88,7 @@ bash 3.api_and_airflow_server_install.sh
 
 ## Install Airflow Worker
 
-Create the **cubo** user sing the following command:
-
-```sh 
-sudo adduser cubo
-sudo usermod -aG sudo cubo
-su cubo
-cd
-```
-
-Install git
-
-```sh 
-sudo apt install git
-```
+This script will install the an Arflow Worker. This worker is configured to attend the following queues: util, airflow_small, airflow_medium, airflow_large, airflow_xlarge.
 
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
@@ -149,27 +108,7 @@ bash 4.worker_airflow_install.sh
 
 ## Install Ingestor
 
-This script will install
-
-1. [CDCol](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/CDCol).
-2. [Open Data Cube core](https://github.com/opendatacube/datacube-core.git). 
-3. [Ingestor](https://gitlab.virtual.uniandes.edu.co/datacube-ideam/ingestion-scheduler) cronjob. 
-
-Create the **cubo** user sing the following command:
-
-```sh 
-sudo adduser cubo
-sudo usermod -aG sudo cubo
-su cubo
-cd
-```
-
-Install git
-
-```sh 
-sudo apt install git
-```
-
+This script will install a cron job to perform ingestion tasks provided by the web-app database.
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
 ```sh
@@ -187,21 +126,6 @@ bash 5.worker_airflow_install.sh
 ```
 
 ## Install Web
-
-Create the **cubo** user sing the following command:
-
-```sh 
-sudo adduser cubo
-sudo usermod -aG sudo cubo
-su cubo
-cd
-```
-
-Install git
-
-```sh 
-sudo apt install git
-```
 
 Copy the ssh key from the NFS server, change **172.24.99.217** for the IP of your NFS server.
 
@@ -245,26 +169,9 @@ python3.6 manage.py loaddata data/3.profile.json
 python3.6 manage.py loaddata data/4.topic.json
 ```
 
-
-### Install Workflows 
-
-The workflows place the supporting utilities developed to support workflow processing in the corresponding place in the */web_storage* folder.
-
-* dags/cdcol_utils: Utilities used in dag development.
-* plugins/cdcol_plugin: Ariflow Operators and Sensors.
-* algorithm/workflows: Repository of mini-algorithms that can be pluged into workflows.
-
-Run the script as follows
-
-```sh 
-git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/scripts-despliegue-desacoplado.git
-cp scripts-despliegue-desacoplado/7.workflows_install.sh .
-bash 7.workflows_install.sh
-```
-
 ## Known Issues
 
-1. The command ```datacube -v system int``` fails as follows. The problem was fixed downgrading sqlalchemy to versión 1.1.18, using ```pip install sqlalchemy==1.1.18```. The same solution is suggested on [this issue](https://github.com/opendatacube/datacube-core/issues/667). 
+1. The command ```datacube -v system int``` show the output depicted below. The error was fixed downgrading **sqlalchemy** to versión 1.1.18. The ```pip install sqlalchemy==1.1.18``` was used. The same solution is suggested on [this issue](https://github.com/opendatacube/datacube-core/issues/667). 
 
 ```sh 
 Initialising database...
@@ -281,7 +188,7 @@ WHERE agdc.dataset.archived IS NULL AND agdc.dataset.metadata_type_ref = 1]
 (Background on this error at: http://sqlalche.me/e/f405)
 ```
 
-2. After downgrade python using  ```conda install python=3.6.8``` or install a package from another channel ```conda install -c conda-forge```. The following error was produced.
+2. After downgrade python using  ```conda install python=3.6.8``` or install a package from another channel for example: ```conda install -c conda-forge```. The error depicted bellow was produced.
 
 ```sh
 conda info
@@ -292,9 +199,9 @@ Traceback (most recent call last):
 ImportError: No module named conda.cli
 ```
 
-I solve this problem installing the version 4.6.14 of conda as suggested on this issue [9004](https://github.com/conda/conda/issues/9004) before perform further installs.
+This error was solved installing the version 4.6.14 of conda as suggested on this issue [9004](https://github.com/conda/conda/issues/9004) before perform further installs.
 
 `conda install conda=4.6.14
 `
 
-It looks like further versions of conda are introducing this error.
+It looks like further versions of conda are introducing the error.
