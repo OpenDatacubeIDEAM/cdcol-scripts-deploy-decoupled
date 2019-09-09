@@ -59,6 +59,12 @@ if ! hash "conda" > /dev/null; then
 	echo 'export PATH="$HOME/anaconda/bin:$PATH"'>>$HOME/.bashrc
 fi
 
+# To avoid this error
+# OSError: [Errno 13] Permiso denegado: 
+# '/home/cubo/.cache/pip/wheels/ab/4f/e6/....
+sudo chown -R cubo:cubo /home/cubo/.cache
+sudo chown -R cubo:cubo /home/cubo/.conda
+
 source $HOME/.bashrc
 conda install -y python=3.6.8 conda=4.6.14
 
