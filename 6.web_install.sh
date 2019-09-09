@@ -28,22 +28,6 @@ sudo apt install \
   libssl-dev \
   virtualenv
 
-# Install CDCol
-#git clone git@gitlab.virtual.uniandes.edu.co:datacube-ideam/CDCol.git -b desacoplado ~/CDCol
-
-# Compile and Install Python 3.6.8
-# This installs 
-# * pip3.6
-# * python3.6
-#export PYTHONHTTPSVERIFY=0
-#wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tar.xz
-#tar xf Python-3.6.8.tar.xz
-#cd Python-3.6.8
-#./configure
-#make
-#make test
-#sudo make install
-
 WEB_REPOSITORY="git@gitlab.virtual.uniandes.edu.co:datacube-ideam/web-app.git"
 WEB_BRANCH="master"
 
@@ -58,7 +42,7 @@ if ! hash "conda" > /dev/null; then
 fi
 
 source $HOME/.bashrc
-conda install -y python=3.6.8
+conda install -y python=3.6.8 conda=4.6.14
 
 
 # To avoid this error
@@ -70,7 +54,6 @@ sudo chown -R cubo:cubo /usr/local/bin
 
 # Install web application
 cd ~
-#pip3.6 install virtualenv
 virtualenv --python=python3.6 v_ideam
 source ~/v_ideam/bin/activate
 
